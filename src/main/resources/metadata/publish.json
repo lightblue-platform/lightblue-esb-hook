@@ -1,0 +1,35 @@
+{
+    "entityInfo": {
+        "name": "publish",
+        "defaultVersion": "0.0.1-SNAPSHOT",
+        "datastore": {
+            "backend": "mongo",
+            "datasource": "mongodata",
+            "collection": "publish"
+        }
+    },
+    "schema": {
+        "name": "publish",
+        "version": {
+            "value": "0.0.1-SNAPSHOT",
+            "changelog": "initial cut"
+        },
+        "status": {
+            "value": "active"
+        },
+        "access": {
+            "insert": ["anyone"],
+            "find": ["anyone"],
+            "update": ["anyone"],
+            "delete": ["anyone"]
+        },
+        "fields": {
+            "_id": {
+                "type": "uid",
+                "constraints": {
+                    "identity": true
+                }
+            }
+        }
+    }
+}

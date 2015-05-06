@@ -1,0 +1,187 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+  <groupId>org.sonatype.oss</groupId>
+  <artifactId>oss-parent</artifactId>
+  <version>7</version>
+ </parent>
+
+ <groupId>com.redhat.lightblue.hook</groupId>
+ <artifactId>lightblue-publish-hook</artifactId>
+ <version>0.0.1-SNAPSHOT</version>
+ <name>lightblue-publish-hook: ${project.groupId}|${project.artifactId}</name>
+ <description>Lightblue Publish Hook components</description>
+
+ <prerequisites>
+  <maven>3.0</maven>
+ </prerequisites>
+
+ <licenses>
+  <license>
+   <name>GNU GENERAL PUBLIC LICENSE, Version 3, 29 June 2007</name>
+   <url>http://www.gnu.org/licenses/gpl-3.0-standalone.html</url>
+   <distribution>repo</distribution>
+  </license>
+ </licenses>
+
+ <scm>
+  <connection>scm:git:https://github.com/lightblue-platform/lightblue-publish-hook.git</connection>
+  <developerConnection>scm:git:git@github.com/lightblue-platform/lightblue-publish-hook.git</developerConnection>
+  <url>https://github.com/lightblue-platform/lightblue-publish-hook</url>
+  <tag>HEAD</tag>
+ </scm>
+
+ <distributionManagement>
+  <repository>
+   <id>ossrh</id>
+   <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+  </repository>
+ </distributionManagement>
+
+ <properties>
+  <!-- Sonar -->
+  <sonar.exclusions>**/*Test.java,**/*Exception.java,**/com/redhat/lightblue/ldap/test/*.java</sonar.exclusions>
+  <sonar.jdbc.url>jdbc:mysql://127.0.0.1:3306/sonar?useUnicode=true&amp;characterEncoding=utf8&amp;rewriteBatchedStatements=true</sonar.jdbc.url>
+  <sonar.jdbc.username>sonar</sonar.jdbc.username>
+  <sonar.jdbc.password>sonar</sonar.jdbc.password>
+  <sonar.host.url>http://127.0.0.1:8080</sonar.host.url>
+  <sonar.projectName>lightblue-ldap</sonar.projectName>
+ </properties>
+
+ <dependencies>
+  <dependency>
+   <groupId>com.redhat.lightblue.mongo</groupId>
+   <artifactId>lightblue-mongo-metadata</artifactId>
+   <version>1.5.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+   <groupId>org.slf4j</groupId>
+   <artifactId>slf4j-api</artifactId>
+   <version>1.7.7</version>
+  </dependency>
+
+  <!-- Test Dependencies -->
+  <dependency>
+   <groupId>junit</groupId>
+   <artifactId>junit</artifactId>
+   <version>4.11</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.slf4j</groupId>
+   <artifactId>slf4j-simple</artifactId>
+   <version>1.7.7</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>com.redhat.lightblue.mongo</groupId>
+   <artifactId>lightblue-mongo-test</artifactId>
+   <version>1.5.0-SNAPSHOT</version>
+   <scope>test</scope>
+  </dependency>
+  <dependency><!-- Would be nice if mongo-test included this -->
+   <groupId>com.redhat.lightblue.mongo</groupId>
+   <artifactId>lightblue-mongo-config</artifactId>
+   <version>1.5.0-SNAPSHOT</version>
+  </dependency>
+ </dependencies>
+
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.2</version>
+    <configuration>
+     <source>1.7</source>
+     <target>1.7</target>
+    </configuration>
+   </plugin>
+   <plugin>
+    <groupId>org.eluder.coveralls</groupId>
+    <artifactId>coveralls-maven-plugin</artifactId>
+    <version>3.0.1</version>
+   </plugin>
+   <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>cobertura-maven-plugin</artifactId>
+    <version>2.6</version>
+    <configuration>
+     <format>xml</format>
+     <maxmem>256m</maxmem>
+     <!-- aggregated reports for multi-module projects -->
+     <aggregate>true</aggregate>
+    </configuration>
+   </plugin>
+  </plugins>
+ </build>
+
+ <profiles>
+  <profile>
+   <id>release</id>
+   <build>
+    <plugins>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-release-plugin</artifactId>
+      <version>2.5.1</version>
+      <configuration>
+       <tagNameFormat>V@{project.version}</tagNameFormat>
+       <autoVersionSubmodules>true</autoVersionSubmodules>
+       <useReleaseProfile>false</useReleaseProfile>
+       <releaseProfiles>release</releaseProfiles>
+       <goals>deploy</goals>
+      </configuration>
+     </plugin>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <version>1.5</version>
+      <configuration>
+       <useAgent>false</useAgent>
+      </configuration>
+     </plugin>
+     <plugin>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <version>1.6.5</version>
+      <extensions>true</extensions>
+      <configuration>
+       <serverId>ossrh</serverId>
+       <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+       <autoReleaseAfterClose>true</autoReleaseAfterClose>
+      </configuration>
+     </plugin>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.4</version>
+      <executions>
+       <execution>
+        <id>attach-sources</id>
+        <goals>
+         <goal>jar-no-fork</goal>
+        </goals>
+       </execution>
+      </executions>
+     </plugin>
+     <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.10.1</version>
+      <executions>
+       <execution>
+        <id>attach-javadocs</id>
+        <goals>
+         <goal>jar</goal>
+        </goals>
+       </execution>
+      </executions>
+     </plugin>
+    </plugins>
+   </build>
+  </profile>
+ </profiles>
+
+</project>
