@@ -6,7 +6,19 @@
             "backend": "mongo",
             "datasource": "mongodata",
             "collection": "publish"
-        }
+        },
+        "enums": [
+            {
+                "name": "CRUDOperationTypes",
+                "values": [
+                    "INSERT", 
+                    "SAVE", 
+                    "UPDATE", 
+                    "DELETE", 
+                    "FIND"
+                ]
+            }
+        ]
     },
     "schema": {
         "name": "publish",
@@ -28,6 +40,79 @@
                 "type": "uid",
                 "constraints": {
                     "identity": true
+                }
+            },
+            "entityName": {
+                "type": "string",
+                "description": "Name of the entity that generated the event",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "versionText": {
+                "type": "string",
+                "description": "Version of entity that generated the event",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "creationDate": {
+                "type": "date",
+                "description": "When the event was generated.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "createdBy": {
+                "type": "string",
+                "description": "Who created the event.",
+                "constraints": {
+                    "identity": true
+                }
+            },
+            "lastUpdateDate": {
+                "type": "date",
+                "description": "When the event was last changed.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "lastUpdatedBy": {
+                "type": "string",
+                "description": "Who last changed the event.",
+                "constraints": {
+                    "identity": true
+                }
+            },
+            "CRUDOperation": {
+                "type": "string",
+                "description": "The operation executed when the event occurred.",
+                "constraints": {
+                    "identity": true,
+                    "enum": "CRUDOperationTypes"
+                }
+            },
+            "identity": {
+                "type": "array",
+                "description": "The fields that identify the document the event happened on",
+                "items": {
+                    "type": "object",
+                    "fields": {
+                        "fieldText": {
+                            "type": "string",
+                            "description": "The path for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        "valueText": {
+                            "type": "string",
+                            "description": "The value for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        }
+                    }
                 }
             }
         }
