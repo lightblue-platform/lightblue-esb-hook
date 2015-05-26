@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.redhat.lightblue.Response;
@@ -48,7 +49,7 @@ public class ITPublishHookTest extends AbstractMongoCRUDTestController {
      * If no trigger is provided, then all actions of the CRUD type will create events.
      */
     @Test
-    public void testPublishWithDefaultTrigger() throws Exception {
+    public void testPublish() throws Exception {
         Response insertResponse = getLightblueFactory().getMediator().insert(createRequest_FromJsonString(
                 InsertionRequest.class,
                 "{\"entity\":\"country\",\"entityVersion\":\"" + COUNTRY_VERSION + "\",\"data\":["
@@ -66,6 +67,10 @@ public class ITPublishHookTest extends AbstractMongoCRUDTestController {
         assertNoErrors(findResponse);
         assertNoDataErrors(findResponse);
         assertEquals(1, findResponse.getMatchCount());
-    }
 
+        //dates and uids had to be left out to prevent test from always failing.
+        JSONAssert.assertEquals("[{\"identity\":[{\"fieldText\":\"_id\"},{\"valueText\":\"123\",\"fieldText\":\"iso2Code\"},{\"valueText\":\"456\",\"fieldText\":\"iso3Code\"}],\"createdBy\":\"publishHook\",\"versionText\":\"0.1.0-SNAPSHOT\",\"status\":\"unprocessed\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"CRUDOperation\":\"INSERT\",\"entityName\":\"country\",\"objectType\":\"publish\",\"identity#\":3}]",
+                findResponse.getEntityData().toString(),
+                false);
+    }
 }

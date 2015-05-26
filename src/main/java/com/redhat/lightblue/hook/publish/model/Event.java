@@ -19,6 +19,8 @@ public class Event {
     private String lastUpdatedBy;
     private String CRUDOperation;
     private final List<EventIdentity> identity = new ArrayList<>();
+    private String status;
+    private String notes;
 
     public String getEntityName() {
         return entityName;
@@ -91,6 +93,22 @@ public class Event {
         for (EventIdentity id : eventIdentities) {
             identity.add(id);
         }
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
 }

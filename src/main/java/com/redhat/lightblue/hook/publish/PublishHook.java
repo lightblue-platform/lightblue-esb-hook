@@ -70,6 +70,8 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
             event.setCRUDOperation(doc.getCRUDOperation().toString());
 
+            event.setStatus("unprocessed");
+
             for (Field f : doc.getEntityMetadata().getEntitySchema().getIdentityFields()) {
                 Path p = f.getFullPath();
                 JsonNode node = null;

@@ -18,6 +18,18 @@
                     "FIND"
                 ]
             }
+        ],
+        "indexes": [
+            {
+                "fields": [
+                    {
+                        "field": "status",
+                        "dir": "$asc"
+                    }
+                ],
+                "name": "status index",
+                "unique": false
+            }
         ]
     },
     "schema": {
@@ -67,7 +79,7 @@
                 "type": "string",
                 "description": "Who created the event.",
                 "constraints": {
-                    "identity": true
+                    "required": true
                 }
             },
             "lastUpdateDate": {
@@ -81,14 +93,14 @@
                 "type": "string",
                 "description": "Who last changed the event.",
                 "constraints": {
-                    "identity": true
+                    "required": true
                 }
             },
             "CRUDOperation": {
                 "type": "string",
                 "description": "The operation executed when the event occurred.",
                 "constraints": {
-                    "identity": true,
+                    "required": true,
                     "enum": "CRUDOperationTypes"
                 }
             },
@@ -113,6 +125,20 @@
                             }
                         }
                     }
+                }
+            },
+            "status": {
+                "type": "string",
+                "description": "Indicates the process state of this event.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "notes": {
+                "type": "string",
+                "description": "Optional field for Operators to provide notes.",
+                "constraints": {
+                    "required": false
                 }
             }
         }
