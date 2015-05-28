@@ -7,22 +7,25 @@ import com.redhat.lightblue.metadata.parser.MetadataParser;
 
 public class PublishHookConfigurationParser<T> implements HookConfigurationParser<T> {
 
+    @Override
     public String getName() {
         return PublishHook.HOOK_NAME;
     }
 
+    @Override
     public CRUDHook getCRUDHook() {
         return new PublishHook();
     }
 
+    @Override
     public void convert(MetadataParser<T> parser, T emptyNode, HookConfiguration object) {
         // TODO Auto-generated method stub
 
     }
 
+    @Override
     public HookConfiguration parse(String name, MetadataParser<T> parser, T node) {
-        // TODO Auto-generated method stub
-        return null;
+        return new PublishHookConfiguration();
     }
 
 }
