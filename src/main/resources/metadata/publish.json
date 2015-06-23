@@ -11,10 +11,10 @@
             {
                 "name": "CRUDOperationTypes",
                 "values": [
-                    "INSERT", 
-                    "SAVE", 
-                    "UPDATE", 
-                    "DELETE", 
+                    "INSERT",
+                    "SAVE",
+                    "UPDATE",
+                    "DELETE",
                     "FIND"
                 ]
             }
