@@ -19,7 +19,7 @@ import com.redhat.lightblue.config.LightblueFactory;
 import com.redhat.lightblue.config.LightblueFactoryAware;
 import com.redhat.lightblue.crud.InsertionRequest;
 import com.redhat.lightblue.hook.publish.model.Event;
-import com.redhat.lightblue.hook.publish.model.EventIdentity;
+import com.redhat.lightblue.hook.publish.model.Identity;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.hooks.HookDoc;
 import com.redhat.lightblue.metadata.EntityMetadata;
@@ -33,7 +33,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
     private final Logger LOGGER = LoggerFactory.getLogger(PublishHook.class);
 
     public static final String HOOK_NAME = "publishHook";
-    public static final String ENTITY_NAME = "publish";
+    public static final String ENTITY_NAME = "esbEvents";
     public static final String ERR_MISSING_ID = HOOK_NAME + ":MissingID";
 
     private LightblueFactory lightblueFactory;
@@ -59,16 +59,18 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         for (HookDoc doc : docs) {
             Event event = new Event();
 
-            event.setEntityName(doc.getEntityMetadata().getName());
-            event.setVersionText(doc.getEntityMetadata().getVersion().getValue());
-
+            event.setEntityName(publishHookConfiguration.getEntityName());
+            event.setRootEntityName(publishHookConfiguration.getRootEntityName());
+            event.setEndSystem(publishHookConfiguration.getEndSystem());
+            event.setVersion(doc.getEntityMetadata().getVersion().getValue());
+            event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
             event.setCreatedBy(HOOK_NAME);
             event.setCreationDate(new Date());
 
             event.setLastUpdatedBy(HOOK_NAME);
             event.setLastUpdateDate(new Date());
 
-            event.setCRUDOperation(doc.getCRUDOperation().toString());
+            event.setOperation(doc.getCRUDOperation().toString());
 
             event.setStatus("unprocessed");
 
@@ -86,9 +88,9 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                     throw Error.get(ERR_MISSING_ID, "path:" + p.toString());
                 }
 
-                EventIdentity identity = new EventIdentity();
-                identity.setFieldText(p.toString());
-                identity.setValueText(node.asText());
+                Identity identity = new Identity();
+                identity.setField(p.toString());
+                identity.setValue(node.asText());
                 event.addIdentities(identity);
             }
 

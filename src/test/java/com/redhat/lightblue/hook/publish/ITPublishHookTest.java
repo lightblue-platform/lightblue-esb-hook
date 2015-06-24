@@ -20,7 +20,7 @@ import com.redhat.lightblue.mongo.test.AbstractMongoCRUDTestController;
 
 public class ITPublishHookTest extends AbstractMongoCRUDTestController {
 
-    private static final String PUBLISH_VERSION = "0.0.1-SNAPSHOT";
+    private static final String ESB_EVENTS_VERSION = "0.0.1-SNAPSHOT";
     private static final String COUNTRY_VERSION = "0.1.0-SNAPSHOT";
 
     @BeforeClass
@@ -35,14 +35,14 @@ public class ITPublishHookTest extends AbstractMongoCRUDTestController {
     @Override
     protected JsonNode[] getMetadataJsonNodes() throws Exception {
         return new JsonNode[]{
-                json(loadResource("/metadata/publish.json", true)),
+                json(loadResource("/metadata/esbEvents.json", true)),
                 json(loadResource("/metadata/country_with_publishhook.json", true))
         };
     }
 
     @Before
     public void before() throws UnknownHostException {
-        cleanupMongoCollections("country", "publish");
+        cleanupMongoCollections("country", "esbEvents");
     }
 
     /**
@@ -61,15 +61,15 @@ public class ITPublishHookTest extends AbstractMongoCRUDTestController {
 
         Response findResponse = getLightblueFactory().getMediator().find(createRequest_FromJsonString(
                 FindRequest.class,
-                "{\"entity\":\"publish\",\"entityVersion\":\"" + PUBLISH_VERSION + "\","
-                        + "\"query\":{\"field\":\"objectType\",\"op\":\"$eq\",\"rvalue\":\"publish\"},"
+                "{\"entity\":\"esbEvents\",\"entityVersion\":\"" + ESB_EVENTS_VERSION + "\","
+                        + "\"query\":{\"field\":\"objectType\",\"op\":\"$eq\",\"rvalue\":\"esbEvents\"},"
                         + "\"projection\": [{\"field\":\"*\",\"include\":true,\"recursive\":true}]}"));
         assertNoErrors(findResponse);
         assertNoDataErrors(findResponse);
         assertEquals(1, findResponse.getMatchCount());
 
         //dates and uids had to be left out to prevent test from always failing.
-        JSONAssert.assertEquals("[{\"identity\":[{\"fieldText\":\"_id\"},{\"valueText\":\"123\",\"fieldText\":\"iso2Code\"},{\"valueText\":\"456\",\"fieldText\":\"iso3Code\"}],\"createdBy\":\"publishHook\",\"versionText\":\"0.1.0-SNAPSHOT\",\"status\":\"unprocessed\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"CRUDOperation\":\"INSERT\",\"entityName\":\"country\",\"objectType\":\"publish\",\"identity#\":3}]",
+        JSONAssert.assertEquals("[{\"identity\":[{\"field\":\"_id\"},{\"value\":\"123\",\"field\":\"iso2Code\"},{\"value\":\"456\",\"field\":\"iso3Code\"}],\"rootEntityName\":\"Country\",\"endSystem\":\"WEB\",\"createdBy\":\"publishHook\",\"version\":\"0.1.0-SNAPSHOT\",\"status\":\"unprocessed\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"operation\":\"INSERT\",\"entityName\":\"Country\",\"objectType\":\"esbEvents\",\"identity#\":3}]",
                 findResponse.getEntityData().toString(),
                 false);
     }
