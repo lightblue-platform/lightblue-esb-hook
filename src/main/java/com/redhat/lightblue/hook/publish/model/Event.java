@@ -158,7 +158,7 @@ public class Event {
     }
 
     public void addHeaders(Collection<Header> headers) {
-        headers.addAll(headers);
+        this.headers.addAll(headers);
     }
 
     public void addHeaders(Header... headers) {

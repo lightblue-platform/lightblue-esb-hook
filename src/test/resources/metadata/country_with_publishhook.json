@@ -8,7 +8,37 @@
           "entityName": "Country",
           "rootEntityName": "Country",
           "endSystem": "WEB",
-          "defaultPriority": "100"
+          "defaultPriority": "100",
+          "headers": [
+            {
+              "name": "test",
+              "value": "true"
+            },
+            {
+              "name": "noop",
+              "value": "false"
+            }
+          ],
+          "integrationConfigurations": [
+            {
+              "integratedFields": [
+                "name",
+                "iso2Code",
+                "iso3Code",
+                "optionalField"
+              ],
+              "identityfields": [
+                "name",
+                "iso2Code",
+                "iso3Code"
+              ],
+              "rootIdentityfields": [
+                "name",
+                "iso2Code",
+                "iso3Code"
+              ]
+            }
+          ]
         },
         "actions": [
           "insert",
@@ -86,6 +116,9 @@
         }
       },
       "optionalField": {
+        "type": "string"
+      },
+      "notIntegratedField": {
         "type": "string"
       }
     }

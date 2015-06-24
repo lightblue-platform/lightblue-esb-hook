@@ -66,6 +66,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
             event.setCreatedBy(HOOK_NAME);
             event.setCreationDate(new Date());
+            event.addHeaders(publishHookConfiguration.getHeaders());
 
             event.setLastUpdatedBy(HOOK_NAME);
             event.setLastUpdateDate(new Date());
