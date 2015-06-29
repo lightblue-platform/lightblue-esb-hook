@@ -9,17 +9,14 @@
           "rootEntityName": "Country",
           "endSystem": "WEB",
           "defaultPriority": "100",
-          "headers": [
-            {
-              "name": "test",
-              "value": "true"
-            },
-            {
-              "name": "noop",
-              "value": "false"
-            }
-          ],
-          "integrationConfigurations": [
+          "onAdd": {
+            "identityfields": [
+                "_id",
+                "iso2Code",
+                "iso3Code"
+              ]
+          },
+          "onUpdate": [
             {
               "integratedFields": [
                 "name",
@@ -28,12 +25,7 @@
                 "optionalField"
               ],
               "identityfields": [
-                "name",
-                "iso2Code",
-                "iso3Code"
-              ],
-              "rootIdentityfields": [
-                "name",
+                "_id",
                 "iso2Code",
                 "iso3Code"
               ]
@@ -116,7 +108,18 @@
         }
       },
       "optionalField": {
-        "type": "string"
+        "type": "array",
+        "items": {
+            "type": "object",
+            "fields": {
+                "myRandomField": {
+                    "type" : "string"
+                },
+                "mySpecificField": {
+                    "type" : "string"
+                }
+            }
+        }
       },
       "notIntegratedField": {
         "type": "string"

@@ -18,7 +18,8 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     public static final String PROPERTY_HEADERS = "headers";
     public static final String PROPERTY_HEADER_NAME = "name";
     public static final String PROPERTY_HEADER_VALUE = "value";
-    public static final String PROPERTY_INTEGRATION_CONFIGURATIONS = "integrationConfigurations";
+    public static final String PROPERTY_ON_ADD = "onAdd";
+    public static final String PROPERTY_ON_UPDATE = "onUpdate";
     public static final String PROPERTY_INTEGRATED_FIELDS = "integratedFields";
     public static final String PROPERTY_IDENTITY_FIELDS = "identityfields";
     public static final String PROPERTY_ROOT_IDENTITY_FIELDS = "rootIdentityfields";
@@ -42,28 +43,44 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             p.putValue(emptyNode, PROPERTY_END_SYSTEM, c.getEndSystem());
             p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, c.getDefaultPriority());
             Object headersArray = p.newArrayField(emptyNode, PROPERTY_HEADERS);
-            for(Header h : c.getHeaders()) {
+            for (Header h : c.getHeaders()) {
                 T headerObject = p.newNode();
-                p.putString(headerObject, PROPERTY_HEADER_NAME, h.getName() );
-                p.putString(headerObject, PROPERTY_HEADER_VALUE, h.getValue() );
+                p.putString(headerObject, PROPERTY_HEADER_NAME, h.getName());
+                p.putString(headerObject, PROPERTY_HEADER_VALUE, h.getValue());
                 p.addObjectToArray(headersArray, headerObject);
             }
-            Object integrationConfigurationArray = p.newArrayField(emptyNode, PROPERTY_INTEGRATION_CONFIGURATIONS);
-            for(IntegrationConfiguration integrationConfiguration : c.getIdentityConfigurations()) {
-                T integrationConfigurationObject = p.newNode();
-                Object integrationFieldsArray = p.newArrayField(integrationConfigurationObject, PROPERTY_INTEGRATED_FIELDS);
-                for(String integrationField : integrationConfiguration.getIntegratedFields()) {
-                    p.addStringToArray(integrationFieldsArray, integrationField);
+
+            T onAddConfigurationObject = p.newNode();
+            p.putObject(emptyNode, PROPERTY_ON_ADD, onAddConfigurationObject);
+            Object onAddIdentityFieldsArray = p.newArrayField(onAddConfigurationObject, PROPERTY_IDENTITY_FIELDS);
+            for (String identityField : c.getOnAdd().getIdentityFields()) {
+                p.addStringToArray(onAddIdentityFieldsArray, identityField);
+            }
+            if (c.getOnAdd().getRootIdentityFields() != null) {
+                Object onAddRootIdentityFieldsArray = p.newArrayField(onAddConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
+                for (String rootIdentityField : c.getOnAdd().getRootIdentityFields()) {
+                    p.addStringToArray(onAddRootIdentityFieldsArray, rootIdentityField);
                 }
-                Object identityFieldsArray = p.newArrayField(integrationConfigurationObject, PROPERTY_IDENTITY_FIELDS);
-                for(String identityField : integrationConfiguration.getIdentityFields()) {
-                    p.addStringToArray(identityFieldsArray, identityField);
+            }
+
+            Object onUpdateArray = p.newArrayField(emptyNode, PROPERTY_ON_UPDATE);
+            for (IntegrationConfiguration onUpdateConfiguration : c.getOnUpdate()) {
+                T onUpdateConfigurationObject = p.newNode();
+                Object onUpdateIntegrationFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_INTEGRATED_FIELDS);
+                for (String integrationField : onUpdateConfiguration.getIntegratedFields()) {
+                    p.addStringToArray(onUpdateIntegrationFieldsArray, integrationField);
                 }
-                Object rootIdentityFieldsArray = p.newArrayField(integrationConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
-                for(String rootIdentityField : integrationConfiguration.getRootIdentityFields()) {
-                    p.addStringToArray(rootIdentityFieldsArray, rootIdentityField);
+                Object onUpdateIdentityFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_IDENTITY_FIELDS);
+                for (String identityField : onUpdateConfiguration.getIdentityFields()) {
+                    p.addStringToArray(onUpdateIdentityFieldsArray, identityField);
                 }
-                p.addObjectToArray(integrationConfigurationArray, integrationConfigurationObject);
+                if (onUpdateConfiguration.getRootIdentityFields() != null) {
+                    Object onUpdateRootIdentityFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
+                    for (String rootIdentityField : onUpdateConfiguration.getRootIdentityFields()) {
+                        p.addStringToArray(onUpdateRootIdentityFieldsArray, rootIdentityField);
+                    }
+                }
+                p.addObjectToArray(onUpdateArray, onUpdateConfigurationObject);
             }
         }
     }
@@ -75,30 +92,29 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
         String endSystem = parser.getRequiredStringProperty(node, PROPERTY_END_SYSTEM);
         String defaultPriority = parser.getRequiredStringProperty(node, PROPERTY_DEFAULT_PRIORITY);
         List<Header> headers = new ArrayList<>();
-        for(T header : parser.getObjectList(node,PROPERTY_HEADERS)) {
-            Header h = new Header();
-            h.setName(parser.getRequiredStringProperty(header, PROPERTY_HEADER_NAME));
-            h.setValue(parser.getRequiredStringProperty(header, PROPERTY_HEADER_VALUE));
-            headers.add(h);
+        List<T> headerConfigurations = parser.getObjectList(node, PROPERTY_HEADERS);
+        if (headerConfigurations != null) {
+            for (T headerConfiguration : headerConfigurations) {
+                Header header = new Header();
+                header.setName(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_NAME));
+                header.setValue(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_VALUE));
+                headers.add(header);
+            }
         }
-        List<IntegrationConfiguration> identityConfigurations = new ArrayList<>();
-        for(T configuration: parser.getObjectList(node,PROPERTY_INTEGRATION_CONFIGURATIONS)) {
-            List<String> integratedFields = new ArrayList<>();
-            for(String integratedField: parser.getStringList(configuration, PROPERTY_INTEGRATED_FIELDS)) {
-                integratedFields.add(integratedField);
-            }
-            List<String> identityFields = new ArrayList<>();
-            for(String identityField: parser.getStringList(configuration, PROPERTY_IDENTITY_FIELDS)) {
-                identityFields.add(identityField);
-            }
-            List<String> rootIdentityFields = new ArrayList<>();
-            for(String rootIdentityField: parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS)) {
-                rootIdentityFields.add(rootIdentityField);
-            }
-            IntegrationConfiguration conf = new IntegrationConfiguration(integratedFields, identityFields, rootIdentityFields);
-            identityConfigurations.add(conf);
-        }
-        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, identityConfigurations);
-    }
 
+        T onAddConfigurationObject = parser.getObjectProperty(node, PROPERTY_ON_ADD);
+        List<String> onAddIdentityFields = parser.getStringList(onAddConfigurationObject, PROPERTY_IDENTITY_FIELDS);
+        List<String> onAddRootIdentityFields = parser.getStringList(onAddConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
+        IntegrationConfiguration onAddConfiguration = new IntegrationConfiguration(null, onAddIdentityFields, onAddRootIdentityFields);
+
+        List<IntegrationConfiguration> onUpdateConfigurations = new ArrayList<>();
+        for (T configuration : parser.getObjectList(node, PROPERTY_ON_UPDATE)) {
+            List<String> integratedFields = parser.getStringList(configuration, PROPERTY_INTEGRATED_FIELDS);
+            List<String> identityFields = parser.getStringList(configuration, PROPERTY_IDENTITY_FIELDS);
+            List<String> rootIdentityFields = parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS);
+            IntegrationConfiguration conf = new IntegrationConfiguration(integratedFields, identityFields, rootIdentityFields);
+            onUpdateConfigurations.add(conf);
+        }
+        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, onAddConfiguration, onUpdateConfigurations);
+    }
 }
