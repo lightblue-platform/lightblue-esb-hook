@@ -9,7 +9,7 @@
 
  <groupId>com.redhat.lightblue.hook</groupId>
  <artifactId>esb-publish-hook</artifactId>
- <version>0.0.1-SNAPSHOT</version>
+ <version>0.0.2-SNAPSHOT</version>
  <name>esb-publish-hook: ${project.groupId}|${project.artifactId}</name>
  <description>ESB Publish Hook components</description>
 
@@ -53,12 +53,12 @@
   <dependency>
    <groupId>com.redhat.lightblue</groupId>
    <artifactId>lightblue-core-config</artifactId>
-   <version>1.6.0-SNAPSHOT</version>
+   <version>1.7.0-SNAPSHOT</version>
   </dependency>
   <dependency>
    <groupId>com.redhat.lightblue</groupId>
    <artifactId>lightblue-core-metadata</artifactId>
-   <version>1.6.0-SNAPSHOT</version>
+   <version>1.7.0-SNAPSHOT</version>
   </dependency>
   <dependency>
    <groupId>org.slf4j</groupId>
@@ -82,13 +82,13 @@
   <dependency>
    <groupId>com.redhat.lightblue.mongo</groupId>
    <artifactId>lightblue-mongo-test</artifactId>
-   <version>1.6.0-SNAPSHOT</version>
+   <version>1.7.0-SNAPSHOT</version>
    <scope>test</scope>
   </dependency>
   <dependency><!-- Would be nice if mongo-test included this -->
    <groupId>com.redhat.lightblue.mongo</groupId>
    <artifactId>lightblue-mongo-config</artifactId>
-   <version>1.6.0-SNAPSHOT</version>
+   <version>1.7.0-SNAPSHOT</version>
    <scope>test</scope>
   </dependency>
   <dependency>
