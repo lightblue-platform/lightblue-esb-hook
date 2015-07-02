@@ -8,10 +8,10 @@
  </parent>
 
  <groupId>com.redhat.lightblue.hook</groupId>
- <artifactId>lightblue-publish-hook</artifactId>
+ <artifactId>esb-publish-hook</artifactId>
  <version>0.0.1-SNAPSHOT</version>
- <name>lightblue-publish-hook: ${project.groupId}|${project.artifactId}</name>
- <description>Lightblue Publish Hook components</description>
+ <name>esb-publish-hook: ${project.groupId}|${project.artifactId}</name>
+ <description>ESB Publish Hook components</description>
 
  <prerequisites>
   <maven>3.0</maven>
