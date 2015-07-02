@@ -16,7 +16,7 @@ public class Event {
     private final List<Identity> rootIdentity = new ArrayList<>();
     private String endSystem;
     private String status;
-    private String operation;
+    private Operation operation;
     private String eventSource;
     private Integer priorityValue;
     private Date creationDate;
@@ -26,6 +26,10 @@ public class Event {
     private String version;
     private final List<Header> headers = new ArrayList<>();
     private String notes;
+
+    public static enum Operation {
+        INSERT, UPDATE
+    }
 
     public String getEntityName() {
         return entityName;
@@ -87,11 +91,11 @@ public class Event {
         this.status = status;
     }
 
-    public String getOperation() {
+    public Operation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(Operation operation) {
         this.operation = operation;
     }
 

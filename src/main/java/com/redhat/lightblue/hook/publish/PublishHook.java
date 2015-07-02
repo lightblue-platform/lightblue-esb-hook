@@ -2,9 +2,9 @@ package com.redhat.lightblue.hook.publish;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +28,6 @@ import com.redhat.lightblue.eval.Projector;
 import com.redhat.lightblue.hook.publish.model.Event;
 import com.redhat.lightblue.hook.publish.model.Identity;
 import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
-import com.redhat.lightblue.hook.publish.model.IdentitySet;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.hooks.HookDoc;
 import com.redhat.lightblue.metadata.EntityMetadata;
@@ -86,11 +85,32 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
                         if (doc.getPreDoc() == null
                                 || JSONCompare.compareJSON(integrationProjectedPreDoc, integrationProjectedPostDoc, JSONCompareMode.LENIENT).failed()) {
-                            Set<IdentitySet> identitySets = IdentityExctractionUtil.compareAndGetIdentities(integrationProjectedPreDoc,
-                                    integrationProjectedPostDoc, identityProjectedPostDoc);
-                            for (IdentitySet set : identitySets) {
-                                insertEvent(publishHookConfiguration, doc, set.getOperation(), set.getSet(),
-                                        getRootIdentities(set.getSet(), configuration.getRootIdentityFields()));
+                            Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(integrationProjectedPreDoc, integrationProjectedPostDoc,
+                                    identityProjectedPostDoc);
+                            for (Event event : extractedEvents) {
+
+                                event.setEntityName(publishHookConfiguration.getEntityName());
+                                event.setRootEntityName(publishHookConfiguration.getRootEntityName());
+                                event.setEndSystem(publishHookConfiguration.getEndSystem());
+                                event.setVersion(doc.getEntityMetadata().getVersion().getValue());
+                                event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
+                                event.setCreatedBy(HOOK_NAME);
+                                event.setCreationDate(new Date());
+                                event.addHeaders(publishHookConfiguration.getHeaders());
+                                event.setLastUpdatedBy(HOOK_NAME);
+                                event.setLastUpdateDate(new Date());
+                                event.setStatus("UNPROCESSED");
+                                event.setEventSource(doc.getWho());
+                                if (configuration.getRootIdentityFields() != null && configuration.getRootIdentityFields().size() > 0) {
+                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), configuration.getRootIdentityFields()));
+                                }
+                                try {
+                                    insert(ENTITY_NAME, event);
+                                } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                                        | InstantiationException | IOException e) {
+                                    LOGGER.error("Unexpected error", e);
+                                }
+
                             }
                         }
                     }
@@ -100,8 +120,8 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             }
         }
     }
-    private Set<Identity> getRootIdentities(Set<Identity> identities, List<String> rootIdentityFields) {
-        Set<Identity> rootIdentities = new HashSet<>();
+    private List<Identity> getRootIdentities(List<Identity> identities, List<String> rootIdentityFields) {
+        List<Identity> rootIdentities = new ArrayList<>();
         if (rootIdentityFields != null && rootIdentityFields.size() > 0) {
             Map<String, Identity> map = new HashMap<>();
             for (Identity identity : identities) {
@@ -112,35 +132,6 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             }
         }
         return rootIdentities;
-    }
-
-    private void insertEvent(PublishHookConfiguration publishHookConfiguration, HookDoc doc, String operation, Set<Identity> identityFields,
-            Set<Identity> rootIdentityFields) {
-
-        Event event = new Event();
-        event.setEntityName(publishHookConfiguration.getEntityName());
-        event.setRootEntityName(publishHookConfiguration.getRootEntityName());
-        event.setEndSystem(publishHookConfiguration.getEndSystem());
-        event.setVersion(doc.getEntityMetadata().getVersion().getValue());
-        event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
-        event.setCreatedBy(HOOK_NAME);
-        event.setCreationDate(new Date());
-        event.addHeaders(publishHookConfiguration.getHeaders());
-        event.setLastUpdatedBy(HOOK_NAME);
-        event.setLastUpdateDate(new Date());
-        event.setOperation(operation);
-        event.setStatus("UNPROCESSED");
-        event.setEventSource(doc.getWho());
-        event.addIdentities(identityFields);
-        if (rootIdentityFields != null && rootIdentityFields.size() > 0) {
-            event.addRootIdentities(rootIdentityFields);
-        }
-        try {
-            insert(ENTITY_NAME, event);
-        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | IOException e) {
-            // TODO Better Handle Exception
-            LOGGER.error("Unexpected error", e);
-        }
     }
 
     private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
