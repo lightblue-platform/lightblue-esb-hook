@@ -21,4 +21,9 @@ public class Identity {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return "{\"" + field + "\":" + "\"" + value + "\"}";
+    }
+
 }

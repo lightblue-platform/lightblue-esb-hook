@@ -9,18 +9,19 @@
           "rootEntityName": "Country",
           "endSystem": "WEB",
           "defaultPriority": "100",
+          "headers": [
+            {
+              "name": "test",
+              "value": "true"
+            },
+            {
+              "name": "noop",
+              "value": "false"
+            }
+          ],
           "identityConfigurations": [
             {
               "integratedFieldsProjection": [
-                {
-                  "field": "name"
-                },
-                {
-                  "field": "iso2Code"
-                },
-                {
-                  "field": "iso3Code"
-                },
                 {
                   "field": "optionalField",
                   "recursive": "true"
@@ -31,11 +32,11 @@
                   "field": "_id"
                 },
                 {
-                  "field": "iso2Code"
-                },
-                {
-                  "field": "iso3Code"
+                  "field": "optionalField.*.mySpecificField"
                 }
+              ],
+              "rootIdentityfields": [
+                "_id"
               ]
             }
           ]

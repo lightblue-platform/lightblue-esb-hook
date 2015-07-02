@@ -19,30 +19,33 @@
               "value": "false"
             }
           ],
-          "onAdd": {
-            "identityfields": [
-                "_id",
-                "iso2Code",
-                "iso3Code"
-              ],
-              "rootIdentityfields": [
-                "_id",
-                "iso2Code",
-                "iso3Code"
-              ]
-          },
-          "onUpdate": [
+          "identityConfigurations": [
             {
-              "integratedFields": [
-                "name",
-                "iso2Code",
-                "iso3Code",
-                "optionalField"
+              "integratedFieldsProjection": [
+                {
+                  "field": "name"
+                },
+                {
+                  "field": "iso2Code"
+                },
+                {
+                  "field": "iso3Code"
+                },
+                {
+                  "field": "optionalField",
+                  "recursive": "true"
+                }
               ],
-              "identityfields": [
-                "_id",
-                "iso2Code",
-                "iso3Code"
+              "identityProjection": [
+                {
+                  "field": "_id"
+                },
+                {
+                  "field": "iso2Code"
+                },
+                {
+                  "field": "iso3Code"
+                }
               ],
               "rootIdentityfields": [
                 "_id",
@@ -130,15 +133,15 @@
       "optionalField": {
         "type": "array",
         "items": {
-            "type": "object",
-            "fields": {
-                "myRandomField": {
-                    "type" : "string"
-                },
-                "mySpecificField": {
-                    "type" : "string"
-                }
+          "type": "object",
+          "fields": {
+            "myRandomField": {
+              "type": "string"
+            },
+            "mySpecificField": {
+              "type": "string"
             }
+          }
         }
       },
       "notIntegratedField": {

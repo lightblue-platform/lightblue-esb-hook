@@ -3,7 +3,7 @@ package com.redhat.lightblue.hook.publish;
 import java.util.List;
 
 import com.redhat.lightblue.hook.publish.model.Header;
-import com.redhat.lightblue.hook.publish.model.IntegrationConfiguration;
+import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.metadata.HookConfiguration;
 
 /**
@@ -18,18 +18,16 @@ public class PublishHookConfiguration implements HookConfiguration {
     private final String endSystem;
     private final String defaultPriority;
     private final List<Header> headers;
-    private final IntegrationConfiguration onAdd;
-    private final List<IntegrationConfiguration> onUpdate;
+    private final List<IdentityConfiguration> identityConfigurations;
 
     public PublishHookConfiguration(String entityName, String rootEntityName, String endSystem, String defaultPriority, List<Header> headers,
-            IntegrationConfiguration onAdd, List<IntegrationConfiguration> onUpdate) {
+            List<IdentityConfiguration> identityConfigurations) {
         this.entityName = entityName;
         this.rootEntityName = rootEntityName;
         this.endSystem = endSystem;
         this.defaultPriority = defaultPriority;
         this.headers = headers;
-        this.onAdd = onAdd;
-        this.onUpdate = onUpdate;
+        this.identityConfigurations = identityConfigurations;
     }
 
     public String getEntityName() {
@@ -47,11 +45,8 @@ public class PublishHookConfiguration implements HookConfiguration {
     public List<Header> getHeaders() {
         return headers;
     }
-    public IntegrationConfiguration getOnAdd() {
-        return onAdd;
-    }
-    public List<IntegrationConfiguration> getOnUpdate() {
-        return onUpdate;
+    public List<IdentityConfiguration> getIdentityConfigurations() {
+        return identityConfigurations;
     }
 
 }

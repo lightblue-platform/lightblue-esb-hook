@@ -46,7 +46,7 @@ public class BasePublishHookTest extends AbstractMongoCRUDTestController {
         Response insertResponse = getLightblueFactory().getMediator().insert(
                 createRequest_FromJsonString(InsertionRequest.class, "{\"entity\":\"country\",\"entityVersion\":\"" + COUNTRY_VERSION + "\",\"data\":["
                         + "{\"_id\":\"12312312312\",\"name\":\"United States\",\"iso2Code\":\"123\",\"iso3Code\":\"456\","
-                        + "\"optionalField\":[{\"myRandomField\":\"taylor\",\"mySpecificField\":\"swift\"}]}" + "]}"));
+                        + "\"optionalField\":[{\"myRandomField\":\"taylor\",\"mySpecificField\":\"swift\"}]}]}"));
         assertNoErrors(insertResponse);
         assertNoDataErrors(insertResponse);
         assertEquals(1, insertResponse.getModifiedCount());
@@ -62,11 +62,14 @@ public class BasePublishHookTest extends AbstractMongoCRUDTestController {
         assertEquals(expectedEvents, findResponse.getMatchCount());
         // dates and uids had to be left out to prevent test from always
         // failing.
-        JSONAssert.assertEquals("[{\"identity\":" + expectedIdentityFields
-                + ",\"rootEntityName\":\"Country\",\"endSystem\":\"WEB\",\"createdBy\":\"publishHook\",\"version\":\"0.1.0-SNAPSHOT\""
-                + ",\"status\":\"UNPROCESSED\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"operation\":\"" + operation + "\","
-                + "\"entityName\":\"Country\",\"objectType\":\"esbEvents\"" + expectedFields + "}]", findResponse.getEntityData().toString(), false);
+        if (expectedEvents > 0) {
+            JSONAssert.assertEquals("[{\"identity\":" + expectedIdentityFields
+                    + ",\"rootEntityName\":\"Country\",\"endSystem\":\"WEB\",\"createdBy\":\"publishHook\",\"version\":\"0.1.0-SNAPSHOT\""
+                    + ",\"status\":\"UNPROCESSED\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"operation\":\"" + operation + "\","
+                    + "\"entityName\":\"Country\",\"objectType\":\"esbEvents\"" + expectedFields + "}]", findResponse.getEntityData().toString(), false);
+        }
     }
+
     protected void updateCountry(int expectedUpdates, String updates) throws Exception {
         Response updateResponse = getLightblueFactory().getMediator().update(
                 createRequest_FromJsonString(UpdateRequest.class, "{ \"entity\":\"country\",\"entityVersion\":\"" + COUNTRY_VERSION + "\","

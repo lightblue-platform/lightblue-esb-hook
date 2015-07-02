@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.redhat.lightblue.hook.publish.model.Header;
-import com.redhat.lightblue.hook.publish.model.IntegrationConfiguration;
+import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.metadata.HookConfiguration;
 import com.redhat.lightblue.metadata.parser.HookConfigurationParser;
 import com.redhat.lightblue.metadata.parser.MetadataParser;
+import com.redhat.lightblue.query.Projection;
 
 public class PublishHookConfigurationParser<T> implements HookConfigurationParser<T> {
     public static final String PROPERTY_ENTITY_NAME = "entityName";
@@ -18,10 +19,9 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     public static final String PROPERTY_HEADERS = "headers";
     public static final String PROPERTY_HEADER_NAME = "name";
     public static final String PROPERTY_HEADER_VALUE = "value";
-    public static final String PROPERTY_ON_ADD = "onAdd";
-    public static final String PROPERTY_ON_UPDATE = "onUpdate";
-    public static final String PROPERTY_INTEGRATED_FIELDS = "integratedFields";
-    public static final String PROPERTY_IDENTITY_FIELDS = "identityfields";
+    public static final String PROPERTY_IDENTITY_CONFIGURATIONS = "identityConfigurations";
+    public static final String PROPERTY_INTEGRATED_FIELDS_PROJECTION = "integratedFieldsProjection";
+    public static final String PROPERTY_IDENTITY_PROJECTION = "identityProjection";
     public static final String PROPERTY_ROOT_IDENTITY_FIELDS = "rootIdentityfields";
 
     @Override
@@ -37,50 +37,31 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     @Override
     public void convert(MetadataParser<T> p, T emptyNode, HookConfiguration object) {
         if (object instanceof PublishHookConfiguration) {
-            PublishHookConfiguration c = (PublishHookConfiguration) object;
-            p.putValue(emptyNode, PROPERTY_ENTITY_NAME, c.getEntityName());
-            p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, c.getRootEntityName());
-            p.putValue(emptyNode, PROPERTY_END_SYSTEM, c.getEndSystem());
-            p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, c.getDefaultPriority());
+            PublishHookConfiguration config = (PublishHookConfiguration) object;
+            p.putValue(emptyNode, PROPERTY_ENTITY_NAME, config.getEntityName());
+            p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getRootEntityName());
+            p.putValue(emptyNode, PROPERTY_END_SYSTEM, config.getEndSystem());
+            p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, config.getDefaultPriority());
             Object headersArray = p.newArrayField(emptyNode, PROPERTY_HEADERS);
-            for (Header h : c.getHeaders()) {
+            for (Header h : config.getHeaders()) {
                 T headerObject = p.newNode();
                 p.putString(headerObject, PROPERTY_HEADER_NAME, h.getName());
                 p.putString(headerObject, PROPERTY_HEADER_VALUE, h.getValue());
                 p.addObjectToArray(headersArray, headerObject);
             }
 
-            T onAddConfigurationObject = p.newNode();
-            p.putObject(emptyNode, PROPERTY_ON_ADD, onAddConfigurationObject);
-            Object onAddIdentityFieldsArray = p.newArrayField(onAddConfigurationObject, PROPERTY_IDENTITY_FIELDS);
-            for (String identityField : c.getOnAdd().getIdentityFields()) {
-                p.addStringToArray(onAddIdentityFieldsArray, identityField);
-            }
-            if (c.getOnAdd().getRootIdentityFields() != null) {
-                Object onAddRootIdentityFieldsArray = p.newArrayField(onAddConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
-                for (String rootIdentityField : c.getOnAdd().getRootIdentityFields()) {
-                    p.addStringToArray(onAddRootIdentityFieldsArray, rootIdentityField);
-                }
-            }
-
-            Object onUpdateArray = p.newArrayField(emptyNode, PROPERTY_ON_UPDATE);
-            for (IntegrationConfiguration onUpdateConfiguration : c.getOnUpdate()) {
-                T onUpdateConfigurationObject = p.newNode();
-                Object onUpdateIntegrationFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_INTEGRATED_FIELDS);
-                for (String integrationField : onUpdateConfiguration.getIntegratedFields()) {
-                    p.addStringToArray(onUpdateIntegrationFieldsArray, integrationField);
-                }
-                Object onUpdateIdentityFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_IDENTITY_FIELDS);
-                for (String identityField : onUpdateConfiguration.getIdentityFields()) {
-                    p.addStringToArray(onUpdateIdentityFieldsArray, identityField);
-                }
-                if (onUpdateConfiguration.getRootIdentityFields() != null) {
-                    Object onUpdateRootIdentityFieldsArray = p.newArrayField(onUpdateConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
-                    for (String rootIdentityField : onUpdateConfiguration.getRootIdentityFields()) {
-                        p.addStringToArray(onUpdateRootIdentityFieldsArray, rootIdentityField);
+            Object identityConfigurationArray = p.newArrayField(emptyNode, PROPERTY_IDENTITY_CONFIGURATIONS);
+            for (IdentityConfiguration identityConfiguration : config.getIdentityConfigurations()) {
+                T identityConfigurationObject = p.newNode();
+                p.putProjection(identityConfigurationObject, PROPERTY_INTEGRATED_FIELDS_PROJECTION, identityConfiguration.getIntegratedFieldsProjection());
+                p.putProjection(identityConfigurationObject, PROPERTY_IDENTITY_PROJECTION, identityConfiguration.getIdentityProjection());
+                if (identityConfiguration.getRootIdentityFields() != null) {
+                    Object rootIdentityFieldsArray = p.newArrayField(identityConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
+                    for (String rootIdentityField : identityConfiguration.getRootIdentityFields()) {
+                        p.addStringToArray(rootIdentityFieldsArray, rootIdentityField);
                     }
                 }
-                p.addObjectToArray(onUpdateArray, onUpdateConfigurationObject);
+                p.addObjectToArray(identityConfigurationArray, identityConfigurationObject);
             }
         }
     }
@@ -102,19 +83,14 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             }
         }
 
-        T onAddConfigurationObject = parser.getObjectProperty(node, PROPERTY_ON_ADD);
-        List<String> onAddIdentityFields = parser.getStringList(onAddConfigurationObject, PROPERTY_IDENTITY_FIELDS);
-        List<String> onAddRootIdentityFields = parser.getStringList(onAddConfigurationObject, PROPERTY_ROOT_IDENTITY_FIELDS);
-        IntegrationConfiguration onAddConfiguration = new IntegrationConfiguration(null, onAddIdentityFields, onAddRootIdentityFields);
-
-        List<IntegrationConfiguration> onUpdateConfigurations = new ArrayList<>();
-        for (T configuration : parser.getObjectList(node, PROPERTY_ON_UPDATE)) {
-            List<String> integratedFields = parser.getStringList(configuration, PROPERTY_INTEGRATED_FIELDS);
-            List<String> identityFields = parser.getStringList(configuration, PROPERTY_IDENTITY_FIELDS);
+        List<IdentityConfiguration> identityConfigurations = new ArrayList<>();
+        for (T configuration : parser.getObjectList(node, PROPERTY_IDENTITY_CONFIGURATIONS)) {
+            Projection integratedFieldsProjection = parser.getProjection(configuration, PROPERTY_INTEGRATED_FIELDS_PROJECTION);
+            Projection identityFieldsProjection = parser.getProjection(configuration, PROPERTY_IDENTITY_PROJECTION);
             List<String> rootIdentityFields = parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS);
-            IntegrationConfiguration conf = new IntegrationConfiguration(integratedFields, identityFields, rootIdentityFields);
-            onUpdateConfigurations.add(conf);
+            IdentityConfiguration conf = new IdentityConfiguration(integratedFieldsProjection, identityFieldsProjection, rootIdentityFields);
+            identityConfigurations.add(conf);
         }
-        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, onAddConfiguration, onUpdateConfigurations);
+        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, identityConfigurations);
     }
 }
