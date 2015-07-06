@@ -19,10 +19,8 @@ import com.redhat.lightblue.hook.publish.model.JSONWrapper;
 public class EventExctractionUtil {
 
     /*
-     * Accepts JSONObject / JSONArray and returns the IdentitySet for the
-     * required permutations.
-     * 
-     * each IdentitySet implies one event
+     * Accepts JSONObject / JSONArray and returns the Events for the required
+     * permutations.
      * 
      * NOTE: this doesn't check if the objects are actually different, call this
      * only if an event is to be created for sure, just to find out what events
