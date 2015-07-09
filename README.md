@@ -1,1 +1,1 @@
-# lightblue-publish-hook
+# esb-publish-hook

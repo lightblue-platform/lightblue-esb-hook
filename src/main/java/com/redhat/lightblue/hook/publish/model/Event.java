@@ -6,21 +6,30 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redhat.lightblue.metadata.types.DateType;
 
 public class Event {
 
     private String entityName;
-    private String versionText;
-    private String createdBy;
+    private final List<Identity> identity = new ArrayList<>();
+    private String rootEntityName;
+    private final List<Identity> rootIdentity = new ArrayList<>();
+    private String endSystem;
+    private String status;
+    private Operation operation;
+    private String eventSource;
+    private Integer priorityValue;
     private Date creationDate;
+    private String createdBy;
     private Date lastUpdateDate;
     private String lastUpdatedBy;
-    private String CRUDOperation;
-    private final List<EventIdentity> identity = new ArrayList<>();
-    private String status;
+    private String version;
+    private final List<Header> headers = new ArrayList<>();
     private String notes;
+
+    public static enum Operation {
+        INSERT, UPDATE
+    }
 
     public String getEntityName() {
         return entityName;
@@ -30,16 +39,80 @@ public class Event {
         this.entityName = entityName;
     }
 
-    public String getVersionText() {
-        return versionText;
+    public List<Identity> getIdentity() {
+        return identity;
     }
 
-    public void setVersionText(String versionText) {
-        this.versionText = versionText;
+    public void addIdentities(Collection<Identity> identities) {
+        this.identity.addAll(identities);
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public void addIdentities(Identity... identities) {
+        for (Identity id : identities) {
+            this.identity.add(id);
+        }
+    }
+
+    public String getRootEntityName() {
+        return rootEntityName;
+    }
+
+    public void setRootEntityName(String entityName) {
+        this.rootEntityName = entityName;
+    }
+
+    public List<Identity> getRootIdentity() {
+        return rootIdentity;
+    }
+
+    public void addRootIdentities(Collection<Identity> identities) {
+        this.rootIdentity.addAll(identities);
+    }
+
+    public void addRootIdentities(Identity... identities) {
+        for (Identity id : identities) {
+            this.rootIdentity.add(id);
+        }
+    }
+
+    public String getEndSystem() {
+        return endSystem;
+    }
+
+    public void setEndSystem(String endSystem) {
+        this.endSystem = endSystem;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+
+    public String getEventSource() {
+        return eventSource;
+    }
+
+    public void setEventSource(String eventSource) {
+        this.eventSource = eventSource;
+    }
+
+    public Integer getPriorityValue() {
+        return priorityValue;
+    }
+
+    public void setPriorityValue(Integer priorityValue) {
+        this.priorityValue = priorityValue;
     }
 
     @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
@@ -47,12 +120,16 @@ public class Event {
         return creationDate;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
@@ -72,35 +149,26 @@ public class Event {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    @JsonProperty("CRUDOperation")
-    public String getCRUDOperation() {
-        return CRUDOperation;
+    public String getVersion() {
+        return version;
     }
 
-    public void setCRUDOperation(String CRUDOperation) {
-        this.CRUDOperation = CRUDOperation;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public List<EventIdentity> getIdentity() {
-        return identity;
+    public List<Header> getHeaders() {
+        return headers;
     }
 
-    public void addIdentities(Collection<EventIdentity> eventIdentities) {
-        identity.addAll(eventIdentities);
+    public void addHeaders(Collection<Header> headers) {
+        this.headers.addAll(headers);
     }
 
-    public void addIdentities(EventIdentity... eventIdentities) {
-        for (EventIdentity id : eventIdentities) {
-            identity.add(id);
+    public void addHeaders(Header... headers) {
+        for (Header header : headers) {
+            this.headers.add(header);
         }
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getNotes() {

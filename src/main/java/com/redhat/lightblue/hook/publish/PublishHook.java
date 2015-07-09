@@ -2,13 +2,19 @@ package com.redhat.lightblue.hook.publish;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONCompare;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -18,25 +24,27 @@ import com.redhat.lightblue.Response;
 import com.redhat.lightblue.config.LightblueFactory;
 import com.redhat.lightblue.config.LightblueFactoryAware;
 import com.redhat.lightblue.crud.InsertionRequest;
+import com.redhat.lightblue.eval.Projector;
 import com.redhat.lightblue.hook.publish.model.Event;
-import com.redhat.lightblue.hook.publish.model.EventIdentity;
+import com.redhat.lightblue.hook.publish.model.Identity;
+import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.hooks.HookDoc;
 import com.redhat.lightblue.metadata.EntityMetadata;
-import com.redhat.lightblue.metadata.Field;
 import com.redhat.lightblue.metadata.HookConfiguration;
+import com.redhat.lightblue.query.Projection;
 import com.redhat.lightblue.util.Error;
-import com.redhat.lightblue.util.Path;
 
 public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
     private final Logger LOGGER = LoggerFactory.getLogger(PublishHook.class);
 
     public static final String HOOK_NAME = "publishHook";
-    public static final String ENTITY_NAME = "publish";
+    public static final String ENTITY_NAME = "esbEvents";
     public static final String ERR_MISSING_ID = HOOK_NAME + ":MissingID";
 
     private LightblueFactory lightblueFactory;
+    private static transient JsonNodeFactory factory = JsonNodeFactory.withExactBigDecimals(true);
 
     @Override
     public String getName() {
@@ -57,51 +65,77 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         PublishHookConfiguration publishHookConfiguration = (PublishHookConfiguration) hookConfiguration;
 
         for (HookDoc doc : docs) {
-            Event event = new Event();
 
-            event.setEntityName(doc.getEntityMetadata().getName());
-            event.setVersionText(doc.getEntityMetadata().getVersion().getValue());
+            for (IdentityConfiguration configuration : publishHookConfiguration.getIdentityConfigurations()) {
 
-            event.setCreatedBy(HOOK_NAME);
-            event.setCreationDate(new Date());
+                try {
+                    Projection integratedFieldsProjection = Projection
+                            .add(configuration.getIdentityProjection(), configuration.getIntegratedFieldsProjection());
+                    Projector identityProjector = Projector.getInstance(configuration.getIdentityProjection(), entityMetadata);
+                    Projector integratedFieldsProjector = Projector.getInstance(integratedFieldsProjection, entityMetadata);
 
-            event.setLastUpdatedBy(HOOK_NAME);
-            event.setLastUpdateDate(new Date());
+                    String integrationProjectedPreDoc = null, integrationProjectedPostDoc, identityProjectedPostDoc;
+                    if (doc.getPreDoc() != null) {
+                        integrationProjectedPreDoc = integratedFieldsProjector.project(doc.getPreDoc(), factory).toString();
+                    }
+                    // no point in creating events if post doc is not available
+                    if (doc.getPostDoc() != null) {
+                        integrationProjectedPostDoc = integratedFieldsProjector.project(doc.getPostDoc(), factory).toString();
+                        identityProjectedPostDoc = identityProjector.project(doc.getPostDoc(), factory).toString();
 
-            event.setCRUDOperation(doc.getCRUDOperation().toString());
+                        if (doc.getPreDoc() == null
+                                || JSONCompare.compareJSON(integrationProjectedPreDoc, integrationProjectedPostDoc, JSONCompareMode.LENIENT).failed()) {
+                            Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(integrationProjectedPreDoc, integrationProjectedPostDoc,
+                                    identityProjectedPostDoc);
+                            for (Event event : extractedEvents) {
 
-            event.setStatus("unprocessed");
+                                event.setEntityName(publishHookConfiguration.getEntityName());
+                                event.setRootEntityName(publishHookConfiguration.getRootEntityName());
+                                event.setEndSystem(publishHookConfiguration.getEndSystem());
+                                event.setVersion(doc.getEntityMetadata().getVersion().getValue());
+                                event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
+                                event.setCreatedBy(HOOK_NAME);
+                                event.setCreationDate(new Date());
+                                event.addHeaders(publishHookConfiguration.getHeaders());
+                                event.setLastUpdatedBy(HOOK_NAME);
+                                event.setLastUpdateDate(new Date());
+                                event.setStatus("UNPROCESSED");
+                                event.setEventSource(doc.getWho());
+                                if (configuration.getRootIdentityFields() != null && configuration.getRootIdentityFields().size() > 0) {
+                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), configuration.getRootIdentityFields()));
+                                }
+                                try {
+                                    insert(ENTITY_NAME, event);
+                                } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                                        | InstantiationException | IOException e) {
+                                    LOGGER.error("Unexpected error", e);
+                                }
 
-            for (Field f : doc.getEntityMetadata().getEntitySchema().getIdentityFields()) {
-                Path p = f.getFullPath();
-                JsonNode node = null;
-
-                if (doc.getPreDoc() != null) {
-                    node = doc.getPreDoc().get(p);
+                            }
+                        }
+                    }
+                } catch (IllegalArgumentException | JSONException e) {
+                    LOGGER.error(e.toString());
                 }
-                else if (doc.getPostDoc() != null) {
-                    node = doc.getPostDoc().get(p);
-                }
-                else {
-                    throw Error.get(ERR_MISSING_ID, "path:" + p.toString());
-                }
-
-                EventIdentity identity = new EventIdentity();
-                identity.setFieldText(p.toString());
-                identity.setValueText(node.asText());
-                event.addIdentities(identity);
-            }
-
-            try {
-                insert(ENTITY_NAME, event);
-            } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | IOException e) {
-                //TODO Better Handle Exception
-                LOGGER.error("Unexpected error", e);
             }
         }
     }
+    private List<Identity> getRootIdentities(List<Identity> identities, List<String> rootIdentityFields) {
+        List<Identity> rootIdentities = new ArrayList<>();
+        if (rootIdentityFields != null && rootIdentityFields.size() > 0) {
+            Map<String, Identity> map = new HashMap<>();
+            for (Identity identity : identities) {
+                map.put(identity.getField(), identity);
+            }
+            for (String rootIdentity : rootIdentityFields) {
+                rootIdentities.add(map.get(rootIdentity));
+            }
+        }
+        return rootIdentities;
+    }
 
-    private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException, NoSuchMethodException, InstantiationException {
+    private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
+            NoSuchMethodException, InstantiationException {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
@@ -110,13 +144,12 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         InsertionRequest ireq = InsertionRequest.fromJson(jsonNode);
         Response r = lightblueFactory.getMediator().insert(ireq);
         if (!r.getErrors().isEmpty()) {
-            //TODO Better Handle Exception
+            // TODO Better Handle Exception
             for (Error e : r.getErrors()) {
                 LOGGER.error(e.toString());
             }
-        }
-        else if (!r.getDataErrors().isEmpty()) {
-            //TODO Better Handle Exception
+        } else if (!r.getDataErrors().isEmpty()) {
+            // TODO Better Handle Exception
             for (DataError e : r.getDataErrors()) {
                 LOGGER.error(e.toString());
             }

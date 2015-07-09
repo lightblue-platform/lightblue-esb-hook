@@ -1,0 +1,210 @@
+{
+    "entityInfo": {
+        "name": "esbEvents",
+        "defaultVersion": "0.0.1-SNAPSHOT",
+        "datastore": {
+            "backend": "mongo",
+            "datasource": "mongodata",
+            "collection": "esbEvents"
+        },
+        "indexes": [
+            {
+                "fields": [
+                    {
+                        "field": "status",
+                        "dir": "$asc"
+                    }
+                ],
+                "name": "status index",
+                "unique": false
+            }
+        ]
+    },
+    "schema": {
+        "name": "esbEvents",
+        "version": {
+            "value": "0.0.1-SNAPSHOT",
+            "changelog": "initial cut"
+        },
+        "status": {
+            "value": "active"
+        },
+        "access": {
+            "insert": ["anyone"],
+            "find": ["anyone"],
+            "update": ["anyone"],
+            "delete": ["anyone"]
+        },
+        "fields": {
+            "_id": {
+                "type": "uid",
+                "constraints": {
+                    "identity": true
+                }
+            },
+            "entityName": {
+                "type": "string",
+                "description": "Name of the entity that generated the event",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "identity": {
+                "type": "array",
+                "description": "The fields that identify the document the event happened on",
+                "items": {
+                    "type": "object",
+                    "fields": {
+                        "field": {
+                            "type": "string",
+                            "description": "The path for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "The value for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        }
+                    }
+                },
+                "constraints": {
+                    "required": true
+                }
+            },
+            "rootEntityName": {
+                "type": "string",
+                "description": "Name of the entity that is a root entity for ESB for the document that the event happened on",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "rootIdentity": {
+                "type": "array",
+                "description": "The fields that identify the root entity the event happened on",
+                "items": {
+                    "type": "object",
+                    "fields": {
+                        "field": {
+                            "type": "string",
+                            "description": "The path for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "The value for this identity field.",
+                            "constraints": {
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            },
+            "endSystem": {
+                "type": "string",
+                "description": "the ESB end system an entity belongs to",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "status": {
+                "type": "string",
+                "description": "Indicates the process state of this event.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "operation": {
+                "type": "string",
+                "description": "The operation executed when the event occurred.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "eventSource": {
+                "type": "string",
+                "description": "Indicates the user / application that performed the operation.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "priorityValue": {
+                "type": "integer",
+                "description": "The priority assigned to an event",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "creationDate": {
+                "type": "date",
+                "description": "When the event was generated.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "createdBy": {
+                "type": "string",
+                "description": "Who created the event.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "lastUpdateDate": {
+                "type": "date",
+                "description": "When the event was last changed.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "lastUpdatedBy": {
+                "type": "string",
+                "description": "Who last changed the event.",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "version": {
+                "type": "string",
+                "description": "Version of entity that generated the event. this is NOT the version ESB consumes",
+                "constraints": {
+                    "required": true
+                }
+            },
+            "headers": {
+                "type": "array",
+                "description": "additional headers to be added on the JMS message enqueued to ESB",
+                "items": {
+                    "type": "object",
+                    "fields": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the header.",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "The value of the header.",
+                            "constraints": {
+                                "required": true
+                            }
+                        }
+                    }
+                }
+            },
+            "notes": {
+                "type": "string",
+                "description": "Optional field for Operators to provide notes.",
+                "constraints": {
+                    "required": false
+                }
+            }
+        }
+    }
+}
