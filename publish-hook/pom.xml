@@ -23,19 +23,57 @@
   
   <parent>
     <groupId>com.redhat.lightblue.hook</groupId>
-    <artifactId>esb-publish-hook</artifactId>
+    <artifactId>lightblue-esb-hook-pom</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
   
-  <artifactId>publish-hook</artifactId>
-  <name>esb-publish-hook: ${project.groupId}|${project.artifactId}</name>
+  <artifactId>lightblue-esb-hook</artifactId>
+  <name>lightblue-esb-hook: ${project.groupId}|${project.artifactId}</name>
   
   <dependencies>
     <dependency>
+      <groupId>com.redhat.lightblue</groupId>
+      <artifactId>lightblue-core-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.redhat.lightblue</groupId>
+      <artifactId>lightblue-core-metadata</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.redhat.lightblue.hook</groupId>
       <artifactId>model</artifactId>
-      <version>0.0.2-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
-  </dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+  
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+     </dependency>
+     
+    <dependency>
+      <groupId>com.redhat.lightblue.mongo</groupId>
+      <artifactId>lightblue-mongo-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency><!-- Would be nice if mongo-test included this -->
+      <groupId>com.redhat.lightblue.mongo</groupId>
+      <artifactId>lightblue-mongo-config</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+   </dependencies>
   
 </project>

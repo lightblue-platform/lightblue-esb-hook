@@ -27,10 +27,10 @@
  </parent>
 
  <groupId>com.redhat.lightblue.hook</groupId>
- <artifactId>esb-publish-hook</artifactId>
+ <artifactId>lightblue-esb-hook-pom</artifactId>
  <version>0.0.2-SNAPSHOT</version>
  <packaging>pom</packaging>
- <name>esb-publish-hook: ${project.groupId}|${project.artifactId}</name>
+ <name>lightblue-esb-hook: ${project.groupId}|${project.artifactId}</name>
  <description>ESB Publish Hook components</description>
 
  <prerequisites>
@@ -46,9 +46,9 @@
  </licenses>
 
  <scm>
-  <connection>scm:git:https://github.com/lightblue-platform/lightblue-publish-hook.git</connection>
-  <developerConnection>scm:git:git@github.com/lightblue-platform/lightblue-publish-hook.git</developerConnection>
-  <url>https://github.com/lightblue-platform/lightblue-publish-hook</url>
+  <connection>scm:git:https://github.com/lightblue-platform/lightblue-esb-hook.git</connection>
+  <developerConnection>scm:git:git@github.com/lightblue-platform/lightblue-esb-hook.git</developerConnection>
+  <url>https://github.com/lightblue-platform/lightblue-esb-hook</url>
   <tag>HEAD</tag>
  </scm>
 
@@ -73,62 +73,71 @@
   <module>model</module>
   <module>publish-hook</module>
  </modules>
-
- <dependencies>
-  <dependency>
-   <groupId>com.redhat.lightblue</groupId>
-   <artifactId>lightblue-core-config</artifactId>
-   <version>1.7.0-SNAPSHOT</version>
-  </dependency>
-  <dependency>
-   <groupId>com.redhat.lightblue</groupId>
-   <artifactId>lightblue-core-metadata</artifactId>
-   <version>1.7.0-SNAPSHOT</version>
-  </dependency>
-  <dependency>
-   <groupId>org.slf4j</groupId>
-   <artifactId>slf4j-api</artifactId>
-   <version>1.7.7</version>
-  </dependency>
-
-  <!-- Test Dependencies -->
-  <dependency>
-   <groupId>junit</groupId>
-   <artifactId>junit</artifactId>
-   <version>4.11</version>
-   <scope>test</scope>
-  </dependency>
-  <dependency>
-   <groupId>org.slf4j</groupId>
-   <artifactId>slf4j-simple</artifactId>
-   <version>1.7.7</version>
-   <scope>test</scope>
-  </dependency>
-  <dependency>
-   <groupId>com.redhat.lightblue.mongo</groupId>
-   <artifactId>lightblue-mongo-test</artifactId>
-   <version>1.7.0-SNAPSHOT</version>
-   <scope>test</scope>
-  </dependency>
-  <dependency><!-- Would be nice if mongo-test included this -->
-   <groupId>com.redhat.lightblue.mongo</groupId>
-   <artifactId>lightblue-mongo-config</artifactId>
-   <version>1.7.0-SNAPSHOT</version>
-   <scope>test</scope>
-  </dependency>
-  <dependency>
-   <groupId>org.skyscreamer</groupId>
-   <artifactId>jsonassert</artifactId>
-   <version>1.2.3</version>
-  </dependency>
- </dependencies>
+ 
+ <dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.redhat.lightblue</groupId>
+      <artifactId>lightblue-core-config</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.redhat.lightblue</groupId>
+      <artifactId>lightblue-core-metadata</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
+      <version>1.2.3</version>
+    </dependency>
+    
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.7</version>
+      <scope>test</scope>
+     </dependency>
+     
+    <dependency>
+      <groupId>com.redhat.lightblue.mongo</groupId>
+      <artifactId>lightblue-mongo-test</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency><!-- Would be nice if mongo-test included this -->
+      <groupId>com.redhat.lightblue.mongo</groupId>
+      <artifactId>lightblue-mongo-config</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+    
+  </dependencies>
+ </dependencyManagement>
 
  <build>
   <plugins>
    <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-compiler-plugin</artifactId>
-    <version>3.2</version>
+    <version>3.3</version>
     <configuration>
      <source>1.7</source>
      <target>1.7</target>

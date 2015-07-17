@@ -23,11 +23,24 @@
   
   <parent>
     <groupId>com.redhat.lightblue.hook</groupId>
-    <artifactId>esb-publish-hook</artifactId>
+    <artifactId>lightblue-esb-hook-pom</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
   
-  <artifactId>model</artifactId>
-  <name>esb-publish-hook: ${project.groupId}|${project.artifactId}</name>
+  <artifactId>lightblue-esb-hook-model</artifactId>
+  <name>lightblue-esb-hook: ${project.groupId}|${project.artifactId}</name>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.redhat.lightblue</groupId>
+      <artifactId>lightblue-core-metadata</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.skyscreamer</groupId>
+      <artifactId>jsonassert</artifactId>
+    </dependency>
+    
+  </dependencies>
   
 </project>
