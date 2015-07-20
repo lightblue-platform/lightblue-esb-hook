@@ -7,7 +7,7 @@
         "configuration": {
           "entityName": "Country",
           "rootEntityName": "Country",
-          "endSystem": "WEB",
+          "endSystem": "nameOfTargetSystem",
           "defaultPriority": "100",
           "identityConfigurations": [
             {
