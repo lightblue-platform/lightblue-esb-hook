@@ -5,7 +5,6 @@
       {
         "name": "publishHook",
         "configuration": {
-          "entityName": "Country",
           "rootEntityName": "Country",
           "endSystem": "WEB",
           "defaultPriority": "100",

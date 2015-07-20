@@ -12,7 +12,6 @@ import com.redhat.lightblue.metadata.parser.MetadataParser;
 import com.redhat.lightblue.query.Projection;
 
 public class PublishHookConfigurationParser<T> implements HookConfigurationParser<T> {
-    public static final String PROPERTY_ENTITY_NAME = "entityName";
     public static final String PROPERTY_ROOT_ENTITY_NAME = "rootEntityName";
     public static final String PROPERTY_END_SYSTEM = "endSystem";
     public static final String PROPERTY_DEFAULT_PRIORITY = "defaultPriority";
@@ -38,7 +37,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     public void convert(MetadataParser<T> p, T emptyNode, HookConfiguration object) {
         if (object instanceof PublishHookConfiguration) {
             PublishHookConfiguration config = (PublishHookConfiguration) object;
-            p.putValue(emptyNode, PROPERTY_ENTITY_NAME, config.getEntityName());
             p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getRootEntityName());
             p.putValue(emptyNode, PROPERTY_END_SYSTEM, config.getEndSystem());
             p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, config.getDefaultPriority());
@@ -68,7 +66,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
 
     @Override
     public HookConfiguration parse(String name, MetadataParser<T> parser, T node) {
-        String entityName = parser.getRequiredStringProperty(node, PROPERTY_ENTITY_NAME);
         String rootEntityName = parser.getRequiredStringProperty(node, PROPERTY_ROOT_ENTITY_NAME);
         String endSystem = parser.getRequiredStringProperty(node, PROPERTY_END_SYSTEM);
         String defaultPriority = parser.getRequiredStringProperty(node, PROPERTY_DEFAULT_PRIORITY);
@@ -91,6 +88,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             IdentityConfiguration conf = new IdentityConfiguration(integratedFieldsProjection, identityFieldsProjection, rootIdentityFields);
             identityConfigurations.add(conf);
         }
-        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, identityConfigurations);
+        return new PublishHookConfiguration(rootEntityName, endSystem, defaultPriority, headers, identityConfigurations);
     }
 }

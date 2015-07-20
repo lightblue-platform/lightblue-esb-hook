@@ -89,7 +89,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                     identityProjectedPostDoc);
                             for (Event event : extractedEvents) {
 
-                                event.setEntityName(publishHookConfiguration.getEntityName());
+                                event.setEntityName(doc.getEntityMetadata().getName());
                                 event.setRootEntityName(publishHookConfiguration.getRootEntityName());
                                 event.setEndSystem(publishHookConfiguration.getEndSystem());
                                 event.setVersion(doc.getEntityMetadata().getVersion().getValue());
@@ -120,6 +120,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             }
         }
     }
+
     private List<Identity> getRootIdentities(List<Identity> identities, List<String> rootIdentityFields) {
         List<Identity> rootIdentities = new ArrayList<>();
         if (rootIdentityFields != null && rootIdentityFields.size() > 0) {
@@ -135,7 +136,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
     }
 
     private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
-            NoSuchMethodException, InstantiationException {
+    NoSuchMethodException, InstantiationException {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
