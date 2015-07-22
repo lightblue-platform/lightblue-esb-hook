@@ -1,4 +1,4 @@
-package com.redhat.lightblue.hook.publish.model;
+package com.redhat.lightblue.hook.publish;
 
 import org.json.JSONArray;
 import org.json.JSONException;
