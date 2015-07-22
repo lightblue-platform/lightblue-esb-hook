@@ -41,7 +41,7 @@
     </dependency>
     <dependency>
       <groupId>com.redhat.lightblue.hook</groupId>
-      <artifactId>model</artifactId>
+      <artifactId>lightblue-esb-hook-model</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

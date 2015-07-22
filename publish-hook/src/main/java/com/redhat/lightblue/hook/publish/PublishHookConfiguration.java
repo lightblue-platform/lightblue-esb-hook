@@ -3,7 +3,6 @@ package com.redhat.lightblue.hook.publish;
 import java.util.List;
 
 import com.redhat.lightblue.hook.publish.model.Header;
-import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.metadata.HookConfiguration;
 
 /**
@@ -33,18 +32,23 @@ public class PublishHookConfiguration implements HookConfiguration {
     public String getEntityName() {
         return entityName;
     }
+
     public String getRootEntityName() {
         return rootEntityName;
     }
+
     public String getEndSystem() {
         return endSystem;
     }
+
     public String getDefaultPriority() {
         return defaultPriority;
     }
+
     public List<Header> getHeaders() {
         return headers;
     }
+
     public List<IdentityConfiguration> getIdentityConfigurations() {
         return identityConfigurations;
     }

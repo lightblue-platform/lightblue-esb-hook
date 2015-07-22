@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.redhat.lightblue.hook.publish.model.Header;
-import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.metadata.HookConfiguration;
 import com.redhat.lightblue.metadata.parser.HookConfigurationParser;

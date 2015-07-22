@@ -27,7 +27,6 @@ import com.redhat.lightblue.crud.InsertionRequest;
 import com.redhat.lightblue.eval.Projector;
 import com.redhat.lightblue.hook.publish.model.Event;
 import com.redhat.lightblue.hook.publish.model.Identity;
-import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.hooks.HookDoc;
 import com.redhat.lightblue.metadata.EntityMetadata;
@@ -120,6 +119,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             }
         }
     }
+
     private List<Identity> getRootIdentities(List<Identity> identities, List<String> rootIdentityFields) {
         List<Identity> rootIdentities = new ArrayList<>();
         if (rootIdentityFields != null && rootIdentityFields.size() > 0) {
@@ -135,7 +135,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
     }
 
     private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
-            NoSuchMethodException, InstantiationException {
+    NoSuchMethodException, InstantiationException {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
