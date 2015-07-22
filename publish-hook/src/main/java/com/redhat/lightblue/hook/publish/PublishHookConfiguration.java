@@ -3,7 +3,6 @@ package com.redhat.lightblue.hook.publish;
 import java.util.List;
 
 import com.redhat.lightblue.hook.publish.model.Header;
-import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.metadata.HookConfiguration;
 
 /**

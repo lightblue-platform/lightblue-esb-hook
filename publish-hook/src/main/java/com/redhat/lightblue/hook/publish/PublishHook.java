@@ -27,7 +27,6 @@ import com.redhat.lightblue.crud.InsertionRequest;
 import com.redhat.lightblue.eval.Projector;
 import com.redhat.lightblue.hook.publish.model.Event;
 import com.redhat.lightblue.hook.publish.model.Identity;
-import com.redhat.lightblue.hook.publish.model.IdentityConfiguration;
 import com.redhat.lightblue.hooks.CRUDHook;
 import com.redhat.lightblue.hooks.HookDoc;
 import com.redhat.lightblue.metadata.EntityMetadata;
