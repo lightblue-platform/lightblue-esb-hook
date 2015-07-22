@@ -7,3 +7,4 @@ target/*
 bin
 bin/*
 *.bak
+rhc-port-forward-status

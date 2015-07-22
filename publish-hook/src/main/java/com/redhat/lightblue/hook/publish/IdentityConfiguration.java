@@ -1,4 +1,4 @@
-package com.redhat.lightblue.hook.publish.model;
+package com.redhat.lightblue.hook.publish;
 
 import java.util.ArrayList;
 import java.util.List;
