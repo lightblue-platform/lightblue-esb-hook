@@ -14,14 +14,13 @@ import org.skyscreamer.jsonassert.JSONParser;
 import com.redhat.lightblue.hook.publish.model.Event;
 import com.redhat.lightblue.hook.publish.model.Event.Operation;
 import com.redhat.lightblue.hook.publish.model.Identity;
-import com.redhat.lightblue.hook.publish.model.JSONWrapper;
 
 public class EventExctractionUtil {
 
     /*
      * Accepts JSONObject / JSONArray and returns the Events for the required
      * permutations.
-     * 
+     *
      * NOTE: this doesn't check if the objects are actually different, call this
      * only if an event is to be created for sure, just to find out what events
      * are to be created.
@@ -91,11 +90,11 @@ public class EventExctractionUtil {
      * we cannot assume order of objects in the array are going to remain the
      * same, however, we can assume the objects in the array are unique in they
      * identifying field values.
-     * 
+     *
      * identity object is the subset of the integrated state of the entity.
      * using that property we create a map for both pre and post arrays, with
      * the identifying sub state as the key.
-     * 
+     *
      * then for all array elements in the identifying array we lookup if that
      * element was added or updated.
      */
@@ -157,10 +156,12 @@ public class EventExctractionUtil {
     }
 
     private static Set<Event> crossMultiplySets(Set<Event> setOne, Set<Event> setTwo) {
-        if (setOne.size() == 0)
+        if (setOne.size() == 0) {
             return setTwo;
-        if (setTwo.size() == 0)
+        }
+        if (setTwo.size() == 0) {
             return setOne;
+        }
         Set<Event> resultSets = new HashSet<>();
         for (Event eventTwo : setTwo) {
             for (Event eventOne : setOne) {
@@ -169,8 +170,7 @@ public class EventExctractionUtil {
                 resultEvent.addIdentities(eventTwo.getIdentity());
                 // insert wins because a nested object / array was inserted
                 resultEvent.setOperation((eventOne.getOperation() == Operation.INSERT || eventTwo.getOperation() == Operation.INSERT)
-                        ? Operation.INSERT
-                        : Operation.UPDATE);
+                        ? Operation.INSERT : Operation.UPDATE);
                 resultSets.add(resultEvent);
             }
         }
