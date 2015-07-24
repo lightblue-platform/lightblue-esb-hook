@@ -2,7 +2,6 @@ package com.redhat.lightblue.hook.publish;
 
 import static com.redhat.lightblue.test.Assert.assertNoDataErrors;
 import static com.redhat.lightblue.test.Assert.assertNoErrors;
-import static com.redhat.lightblue.util.JsonUtils.json;
 import static org.junit.Assert.assertEquals;
 
 import java.net.UnknownHostException;
@@ -11,14 +10,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.redhat.lightblue.Response;
 import com.redhat.lightblue.crud.FindRequest;
 import com.redhat.lightblue.crud.InsertionRequest;
 import com.redhat.lightblue.crud.UpdateRequest;
 import com.redhat.lightblue.mongo.test.AbstractMongoCRUDTestController;
 
-public class BasePublishHookTest extends AbstractMongoCRUDTestController {
+public abstract class BasePublishHookTest extends AbstractMongoCRUDTestController {
 
     protected static final String ESB_EVENTS_VERSION = "0.0.1-SNAPSHOT";
     protected static final String COUNTRY_VERSION = "0.1.0-SNAPSHOT";
@@ -30,11 +28,6 @@ public class BasePublishHookTest extends AbstractMongoCRUDTestController {
 
     public BasePublishHookTest() throws Exception {
         super();
-    }
-
-    @Override
-    protected JsonNode[] getMetadataJsonNodes() throws Exception {
-        return new JsonNode[]{json(loadResource("/metadata/esbEvents.json", true))};
     }
 
     @Before
