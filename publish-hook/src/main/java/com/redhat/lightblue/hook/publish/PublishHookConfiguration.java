@@ -12,23 +12,30 @@ import com.redhat.lightblue.metadata.HookConfiguration;
 public class PublishHookConfiguration implements HookConfiguration {
 
     private static final long serialVersionUID = -2297815875083279355L;
-    private final String rootEntityName;
+
+    private final String esbRootEntityName;
+    private final String esbEventEntityName;
     private final String endSystem;
     private final String defaultPriority;
     private final List<Header> headers;
     private final List<IdentityConfiguration> identityConfigurations;
 
-    public PublishHookConfiguration(String rootEntityName, String endSystem, String defaultPriority, List<Header> headers,
+    public PublishHookConfiguration(String esbRootEntityName, String esbEventEntityName, String endSystem, String defaultPriority, List<Header> headers,
             List<IdentityConfiguration> identityConfigurations) {
-        this.rootEntityName = rootEntityName;
+        this.esbRootEntityName = esbRootEntityName;
+        this.esbEventEntityName = esbEventEntityName;
         this.endSystem = endSystem;
         this.defaultPriority = defaultPriority;
         this.headers = headers;
         this.identityConfigurations = identityConfigurations;
     }
 
-    public String getRootEntityName() {
-        return rootEntityName;
+    public String getEsbRootEntityName() {
+        return esbRootEntityName;
+    }
+
+    public String getEsbEventEntityName() {
+        return esbEventEntityName;
     }
 
     public String getEndSystem() {

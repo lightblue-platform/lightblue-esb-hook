@@ -6,31 +6,53 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redhat.lightblue.metadata.types.DateType;
 
+/**
+ * POJO representation of metadata/esbEvents.json.
+ */
 public class Event {
 
+    /** Marker for the state field that indicates an event has not yet been processed. */
+    public static final String STATE_UNPROCESSED = "UNPROCESSED";
+
+    @JsonProperty("_id")
+    private String id;
     private String entityName;
     private final List<Identity> identity = new ArrayList<>();
-    private String rootEntityName;
+    private String esbRootEntityName;
+    private String esbEventEntityName;
     private final List<Identity> rootIdentity = new ArrayList<>();
     private String endSystem;
     private String status;
-    private Operation operation;
+    private String operation;
     private String eventSource;
     private Integer priorityValue;
+    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
     private Date creationDate;
     private String createdBy;
+    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
     private Date lastUpdateDate;
     private String lastUpdatedBy;
     private String version;
     private final List<Header> headers = new ArrayList<>();
     private String notes;
 
-    public static enum Operation {
-        INSERT, UPDATE
+    /**
+     * @return unique id for this event.
+     */
+    public String getId() {
+        return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * @return name of the lightblue entity that generated this event.
+     */
     public String getEntityName() {
         return entityName;
     }
@@ -39,6 +61,21 @@ public class Event {
         this.entityName = entityName;
     }
 
+    /**
+     * @return version of the lightblue entity that generated this event.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * @return list of fields that uniquely identify the entity entry that
+     * generated this event.
+     */
     public List<Identity> getIdentity() {
         return identity;
     }
@@ -53,14 +90,35 @@ public class Event {
         }
     }
 
-    public String getRootEntityName() {
-        return rootEntityName;
+    /**
+     * @return the name of the esb entity that represents the lightblue entity
+     * that generated this event.
+     */
+    public String getEsbRootEntityName() {
+        return esbRootEntityName;
     }
 
-    public void setRootEntityName(String entityName) {
-        this.rootEntityName = entityName;
+    public void setEsbRootEntityName(String entityName) {
+        this.esbRootEntityName = entityName;
     }
 
+    /**
+     * An event is not always for the rootEntity, sometimes it is on a sub-entity.
+     * This field indicates the name of the sub-entity.
+     * @return name of sub-entity that the event is generated on. Null will be returned
+     * if the event is truly for the rootEntity proper.
+     */
+    public String getEsbEventEntityName() {
+        return esbEventEntityName;
+    }
+
+    public void setEsbEventEntityName(String esbEventEntityName) {
+        this.esbEventEntityName = esbEventEntityName;
+    }
+
+    /**
+     * @return list of fields that uniquely identify the esb entity entry.
+     */
     public List<Identity> getRootIdentity() {
         return rootIdentity;
     }
@@ -75,6 +133,10 @@ public class Event {
         }
     }
 
+    /**
+     * @return name of the esb end system that is responsible for processing
+     * this event.
+     */
     public String getEndSystem() {
         return endSystem;
     }
@@ -83,6 +145,11 @@ public class Event {
         this.endSystem = endSystem;
     }
 
+    /**
+     * @return a marker indicating the workflow state of this event. For example, status
+     * may indicate that an event has still 'unprocessed'.
+     * @see #STATE_UNPROCESSED
+     */
     public String getStatus() {
         return status;
     }
@@ -91,22 +158,24 @@ public class Event {
         this.status = status;
     }
 
-    public Operation getOperation() {
+    /**
+     * @return a marker indicating the operation that caused the event to generate.
+     * In the case of the lightblue-esb-hook, it would be the crud operation performed on the
+     * entity that generated the event.
+     * If the event is created from an external application, then this field could be
+     * relevant to that application.
+     */
+    public String getOperation() {
         return operation;
     }
 
-    public void setOperation(Operation operation) {
+    public void setOperation(String operation) {
         this.operation = operation;
     }
 
-    public String getEventSource() {
-        return eventSource;
-    }
-
-    public void setEventSource(String eventSource) {
-        this.eventSource = eventSource;
-    }
-
+    /**
+     * @return the esb priority weight of this event.
+     */
     public Integer getPriorityValue() {
         return priorityValue;
     }
@@ -115,7 +184,21 @@ public class Event {
         this.priorityValue = priorityValue;
     }
 
-    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
+    /**
+     * @return name of user or application that performed the action
+     * that originated this event.
+     */
+    public String getEventSource() {
+        return eventSource;
+    }
+
+    public void setEventSource(String eventSource) {
+        this.eventSource = eventSource;
+    }
+
+    /**
+     * @return date this event was created on.
+     */
     public Date getCreationDate() {
         return creationDate;
     }
@@ -124,6 +207,9 @@ public class Event {
         this.creationDate = creationDate;
     }
 
+    /**
+     * @return name of user or application that created this event.
+     */
     public String getCreatedBy() {
         return createdBy;
     }
@@ -132,7 +218,9 @@ public class Event {
         this.createdBy = createdBy;
     }
 
-    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
+    /**
+     * @return date this event was last updated on.
+     */
     public Date getLastUpdateDate() {
         return lastUpdateDate;
     }
@@ -141,6 +229,9 @@ public class Event {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    /**
+     * @return name of user or application that last updated this event.
+     */
     public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
@@ -149,14 +240,9 @@ public class Event {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
+    /**
+     * @return list of optional headers for the jms message.
+     */
     public List<Header> getHeaders() {
         return headers;
     }
@@ -171,6 +257,9 @@ public class Event {
         }
     }
 
+    /**
+     * @return any operator notes about this event.
+     */
     public String getNotes() {
         return notes;
     }
