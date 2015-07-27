@@ -56,8 +56,7 @@
         },
         "actions": [
           "insert",
-          "update",
-          "delete"
+          "update"
         ]
       }
     ],

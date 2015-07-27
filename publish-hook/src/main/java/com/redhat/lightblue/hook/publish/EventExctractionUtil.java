@@ -12,14 +12,12 @@ import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONParser;
 
 import com.redhat.lightblue.hook.publish.model.Event;
+import com.redhat.lightblue.hook.publish.model.Event.Operation;
 import com.redhat.lightblue.hook.publish.model.Identity;
 
 public class EventExctractionUtil {
 
-    private static final String OPERATION_INSERT = "INSERT";
-    private static final String OPERATION_UPDATE = "UPDATE";
-
-    /**
+    /*
      * Accepts JSONObject / JSONArray and returns the Events for the required
      * permutations.
      *
@@ -51,7 +49,7 @@ public class EventExctractionUtil {
         return compareAndGetEvents(preObject, postObject, idsObject);
     }
 
-    /**
+    /*
      * For child objects and child arrays, cross multiply the number of simple
      * fields. This is because we need one event per child array element that
      * changed.
@@ -74,9 +72,10 @@ public class EventExctractionUtil {
                 Identity i = new Identity();
                 i.setField(key);
                 i.setValue(post.get(key).toString());
+                Operation operation = (pre == null) ? Operation.INSERT : Operation.UPDATE;
                 if (result.size() == 0) {
                     Event event = new Event();
-                    event.setOperation((pre == null) ? OPERATION_INSERT : OPERATION_UPDATE);
+                    event.setOperation(operation);
                     result.add(event);
                 }
                 for (Event event : result) {
@@ -87,7 +86,7 @@ public class EventExctractionUtil {
         return result;
     }
 
-    /**
+    /*
      * we cannot assume order of objects in the array are going to remain the
      * same, however, we can assume the objects in the array are unique in they
      * identifying field values.
@@ -109,7 +108,7 @@ public class EventExctractionUtil {
                 Set<Event> arrayChildResults = compareAndGetEvents(preJsonObject, postMap.get(key).getValue(), key.getValue());
                 for (Event arrayChildResult : arrayChildResults) {
                     if (!preMap.containsKey(key)) {
-                        arrayChildResult.setOperation(OPERATION_INSERT);
+                        arrayChildResult.setOperation(Operation.INSERT);
                     }
                     result.add(arrayChildResult);
                 }
@@ -170,8 +169,8 @@ public class EventExctractionUtil {
                 resultEvent.addIdentities(eventOne.getIdentity());
                 resultEvent.addIdentities(eventTwo.getIdentity());
                 // insert wins because a nested object / array was inserted
-                resultEvent.setOperation((eventOne.getOperation() == OPERATION_INSERT || eventTwo.getOperation() == OPERATION_INSERT)
-                        ? OPERATION_INSERT : OPERATION_UPDATE);
+                resultEvent.setOperation((eventOne.getOperation() == Operation.INSERT || eventTwo.getOperation() == Operation.INSERT)
+                        ? Operation.INSERT : Operation.UPDATE);
                 resultSets.add(resultEvent);
             }
         }

@@ -25,8 +25,8 @@ public class Event {
     private String esbEventEntityName;
     private final List<Identity> rootIdentity = new ArrayList<>();
     private String endSystem;
-    private String status;
-    private String operation;
+    private Status status;
+    private Operation operation;
     private String eventSource;
     private Integer priorityValue;
     @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
@@ -38,6 +38,14 @@ public class Event {
     private String version;
     private final List<Header> headers = new ArrayList<>();
     private String notes;
+
+    public static enum Status {
+        UNPROCESSED
+    }
+
+    public static enum Operation {
+        INSERT, UPDATE
+    }
 
     /**
      * @return unique id for this event.
@@ -148,13 +156,12 @@ public class Event {
     /**
      * @return a marker indicating the workflow state of this event. For example, status
      * may indicate that an event has still 'unprocessed'.
-     * @see #STATE_UNPROCESSED
      */
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -165,11 +172,11 @@ public class Event {
      * If the event is created from an external application, then this field could be
      * relevant to that application.
      */
-    public String getOperation() {
+    public Operation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(Operation operation) {
         this.operation = operation;
     }
 
