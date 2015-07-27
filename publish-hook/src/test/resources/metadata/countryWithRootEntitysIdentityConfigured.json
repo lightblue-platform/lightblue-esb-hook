@@ -5,16 +5,6 @@
       {
         "name": "publishHook",
         "configuration": {
-          "headers": [
-            {
-              "name": "test",
-              "value": "true"
-            },
-            {
-              "name": "noop",
-              "value": "false"
-            }
-          ],
           "identityConfigurations": [
             {
               "esbRootEntityName": "Country",
@@ -50,7 +40,17 @@
                 "_id",
                 "iso2Code",
                 "iso3Code"
-              ]
+              ],
+              "headers": [
+                {
+                  "name": "test",
+                  "value": "true"
+                },
+                {
+                  "name": "noop",
+                  "value": "false"
+                }
+          ]
             }
           ]
         },

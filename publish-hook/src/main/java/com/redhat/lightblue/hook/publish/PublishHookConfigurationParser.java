@@ -39,14 +39,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
         if (object instanceof PublishHookConfiguration) {
             PublishHookConfiguration config = (PublishHookConfiguration) object;
 
-            Object headersArray = p.newArrayField(emptyNode, PROPERTY_HEADERS);
-            for (Header h : config.getHeaders()) {
-                T headerObject = p.newNode();
-                p.putString(headerObject, PROPERTY_HEADER_NAME, h.getName());
-                p.putString(headerObject, PROPERTY_HEADER_VALUE, h.getValue());
-                p.addObjectToArray(headersArray, headerObject);
-            }
-
             Object identityConfigurationArray = p.newArrayField(emptyNode, PROPERTY_IDENTITY_CONFIGURATIONS);
             for (IdentityConfiguration identityConfiguration : config.getIdentityConfigurations()) {
                 T identityConfigurationObject = p.newNode();
@@ -64,6 +56,13 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
                         p.addStringToArray(rootIdentityFieldsArray, rootIdentityField);
                     }
                 }
+                Object headersArray = p.newArrayField(identityConfigurationObject, PROPERTY_HEADERS);
+                for (Header h : identityConfiguration.getHeaders()) {
+                    T headerObject = p.newNode();
+                    p.putString(headerObject, PROPERTY_HEADER_NAME, h.getName());
+                    p.putString(headerObject, PROPERTY_HEADER_VALUE, h.getValue());
+                    p.addObjectToArray(headersArray, headerObject);
+                }
                 p.addObjectToArray(identityConfigurationArray, identityConfigurationObject);
             }
         }
@@ -72,16 +71,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     @Override
     public HookConfiguration parse(String name, MetadataParser<T> parser, T node) {
         List<Header> headers = new ArrayList<>();
-        List<T> headerConfigurations = parser.getObjectList(node, PROPERTY_HEADERS);
-        if (headerConfigurations != null) {
-            for (T headerConfiguration : headerConfigurations) {
-                Header header = new Header();
-                header.setName(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_NAME));
-                header.setValue(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_VALUE));
-                headers.add(header);
-            }
-        }
-
         List<IdentityConfiguration> identityConfigurations = new ArrayList<>();
         for (T configuration : parser.getObjectList(node, PROPERTY_IDENTITY_CONFIGURATIONS)) {
             String esbRootEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_ROOT_ENTITY_NAME);
@@ -91,6 +80,15 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             Projection integratedFieldsProjection = parser.getProjection(configuration, PROPERTY_INTEGRATED_FIELDS_PROJECTION);
             Projection identityFieldsProjection = parser.getProjection(configuration, PROPERTY_IDENTITY_PROJECTION);
             List<String> rootIdentityFields = parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS);
+            List<T> headerConfigurations = parser.getObjectList(configuration, PROPERTY_HEADERS);
+            if (headerConfigurations != null) {
+                for (T headerConfiguration : headerConfigurations) {
+                    Header header = new Header();
+                    header.setName(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_NAME));
+                    header.setValue(parser.getRequiredStringProperty(headerConfiguration, PROPERTY_HEADER_VALUE));
+                    headers.add(header);
+                }
+            }
 
             IdentityConfiguration conf = new IdentityConfiguration(
                     esbRootEntityName,
@@ -99,10 +97,11 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
                     defaultPriority,
                     integratedFieldsProjection,
                     identityFieldsProjection,
-                    rootIdentityFields);
+                    rootIdentityFields,
+                    headers);
             identityConfigurations.add(conf);
         }
 
-        return new PublishHookConfiguration(headers, identityConfigurations);
+        return new PublishHookConfiguration(identityConfigurations);
     }
 }

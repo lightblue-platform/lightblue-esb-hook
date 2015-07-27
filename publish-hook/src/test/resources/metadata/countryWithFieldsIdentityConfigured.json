@@ -5,16 +5,6 @@
       {
         "name": "publishHook",
         "configuration": {
-          "headers": [
-            {
-              "name": "test",
-              "value": "true"
-            },
-            {
-              "name": "noop",
-              "value": "false"
-            }
-          ],
           "identityConfigurations": [
             {
               "esbRootEntityName": "Country",
@@ -36,6 +26,16 @@
               ],
               "rootIdentityfields": [
                 "_id"
+              ],
+              "headers": [
+	            {
+	              "name": "test",
+	              "value": "true"
+	            },
+	            {
+	              "name": "noop",
+	              "value": "false"
+	            }
               ]
             }
           ]
