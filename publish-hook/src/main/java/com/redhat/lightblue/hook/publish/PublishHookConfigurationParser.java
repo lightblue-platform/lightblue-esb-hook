@@ -38,12 +38,7 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     public void convert(MetadataParser<T> p, T emptyNode, HookConfiguration object) {
         if (object instanceof PublishHookConfiguration) {
             PublishHookConfiguration config = (PublishHookConfiguration) object;
-            p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getEsbRootEntityName());
-            if (config.getEsbEventEntityName() != null) {
-                p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getEsbEventEntityName());
-            }
-            p.putValue(emptyNode, PROPERTY_END_SYSTEM, config.getEndSystem());
-            p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, config.getDefaultPriority());
+
             Object headersArray = p.newArrayField(emptyNode, PROPERTY_HEADERS);
             for (Header h : config.getHeaders()) {
                 T headerObject = p.newNode();
@@ -55,6 +50,12 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             Object identityConfigurationArray = p.newArrayField(emptyNode, PROPERTY_IDENTITY_CONFIGURATIONS);
             for (IdentityConfiguration identityConfiguration : config.getIdentityConfigurations()) {
                 T identityConfigurationObject = p.newNode();
+                p.putValue(identityConfigurationObject, PROPERTY_ROOT_ENTITY_NAME, identityConfiguration.getEsbRootEntityName());
+                if (identityConfiguration.getEsbEventEntityName() != null) {
+                    p.putValue(identityConfigurationObject, PROPERTY_EVENT_ENTITY_NAME, identityConfiguration.getEsbEventEntityName());
+                }
+                p.putValue(identityConfigurationObject, PROPERTY_END_SYSTEM, identityConfiguration.getEndSystem());
+                p.putValue(identityConfigurationObject, PROPERTY_DEFAULT_PRIORITY, identityConfiguration.getDefaultPriority().toString());
                 p.putProjection(identityConfigurationObject, PROPERTY_INTEGRATED_FIELDS_PROJECTION, identityConfiguration.getIntegratedFieldsProjection());
                 p.putProjection(identityConfigurationObject, PROPERTY_IDENTITY_PROJECTION, identityConfiguration.getIdentityProjection());
                 if (identityConfiguration.getRootIdentityFields() != null) {
@@ -70,10 +71,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
 
     @Override
     public HookConfiguration parse(String name, MetadataParser<T> parser, T node) {
-        String esbRootEntityName = parser.getRequiredStringProperty(node, PROPERTY_ROOT_ENTITY_NAME);
-        String esbEventEntityName = parser.getStringProperty(node, PROPERTY_EVENT_ENTITY_NAME);
-        String endSystem = parser.getRequiredStringProperty(node, PROPERTY_END_SYSTEM);
-        String defaultPriority = parser.getRequiredStringProperty(node, PROPERTY_DEFAULT_PRIORITY);
         List<Header> headers = new ArrayList<>();
         List<T> headerConfigurations = parser.getObjectList(node, PROPERTY_HEADERS);
         if (headerConfigurations != null) {
@@ -87,13 +84,25 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
 
         List<IdentityConfiguration> identityConfigurations = new ArrayList<>();
         for (T configuration : parser.getObjectList(node, PROPERTY_IDENTITY_CONFIGURATIONS)) {
+            String esbRootEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_ROOT_ENTITY_NAME);
+            String esbEventEntityName = parser.getStringProperty(configuration, PROPERTY_EVENT_ENTITY_NAME);
+            String endSystem = parser.getRequiredStringProperty(configuration, PROPERTY_END_SYSTEM);
+            Integer defaultPriority = Integer.parseInt(parser.getRequiredStringProperty(configuration, PROPERTY_DEFAULT_PRIORITY));
             Projection integratedFieldsProjection = parser.getProjection(configuration, PROPERTY_INTEGRATED_FIELDS_PROJECTION);
             Projection identityFieldsProjection = parser.getProjection(configuration, PROPERTY_IDENTITY_PROJECTION);
             List<String> rootIdentityFields = parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS);
-            IdentityConfiguration conf = new IdentityConfiguration(integratedFieldsProjection, identityFieldsProjection, rootIdentityFields);
+
+            IdentityConfiguration conf = new IdentityConfiguration(
+                    esbRootEntityName,
+                    esbEventEntityName,
+                    endSystem,
+                    defaultPriority,
+                    integratedFieldsProjection,
+                    identityFieldsProjection,
+                    rootIdentityFields);
             identityConfigurations.add(conf);
         }
 
-        return new PublishHookConfiguration(esbRootEntityName, esbEventEntityName, endSystem, defaultPriority, headers, identityConfigurations);
+        return new PublishHookConfiguration(headers, identityConfigurations);
     }
 }

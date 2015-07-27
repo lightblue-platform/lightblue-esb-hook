@@ -5,11 +5,11 @@
       {
         "name": "publishHook",
         "configuration": {
-          "esbRootEntityName": "Country",
-          "endSystem": "nameOfTargetSystem",
-          "defaultPriority": "100",
           "identityConfigurations": [
             {
+              "esbRootEntityName": "Country",
+              "endSystem": "nameOfTargetSystem",
+              "defaultPriority": "100",
               "integratedFieldsProjection": [
                 {
                   "field": "name"
