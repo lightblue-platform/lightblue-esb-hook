@@ -14,9 +14,6 @@ import com.redhat.lightblue.metadata.types.DateType;
  */
 public class Event {
 
-    /** Marker for the state field that indicates an event has not yet been processed. */
-    public static final String STATE_UNPROCESSED = "UNPROCESSED";
-
     @JsonProperty("_id")
     private String id;
     private String entityName;
@@ -44,7 +41,7 @@ public class Event {
     }
 
     public static enum Operation {
-        INSERT, UPDATE
+        INSERT, UPDATE, RESYNC
     }
 
     /**
