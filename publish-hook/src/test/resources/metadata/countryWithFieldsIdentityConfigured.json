@@ -5,10 +5,6 @@
       {
         "name": "publishHook",
         "configuration": {
-          "entityName": "Country",
-          "rootEntityName": "Country",
-          "endSystem": "nameOfTargetSystem",
-          "defaultPriority": "100",
           "headers": [
             {
               "name": "test",
@@ -21,6 +17,9 @@
           ],
           "identityConfigurations": [
             {
+              "esbRootEntityName": "Country",
+              "endSystem": "nameOfTargetSystem",
+              "defaultPriority": "100",
               "integratedFieldsProjection": [
                 {
                   "field": "optionalField",
@@ -43,8 +42,7 @@
         },
         "actions": [
           "insert",
-          "update",
-          "delete"
+          "update"
         ]
       }
     ],

@@ -3,7 +3,6 @@ package com.redhat.lightblue.hook.publish;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,12 +64,12 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
         for (HookDoc doc : docs) {
 
-            for (IdentityConfiguration configuration : publishHookConfiguration.getIdentityConfigurations()) {
+            for (IdentityConfiguration identityConfiguration : publishHookConfiguration.getIdentityConfigurations()) {
 
                 try {
                     Projection integratedFieldsProjection = Projection
-                            .add(configuration.getIdentityProjection(), configuration.getIntegratedFieldsProjection());
-                    Projector identityProjector = Projector.getInstance(configuration.getIdentityProjection(), entityMetadata);
+                            .add(identityConfiguration.getIdentityProjection(), identityConfiguration.getIntegratedFieldsProjection());
+                    Projector identityProjector = Projector.getInstance(identityConfiguration.getIdentityProjection(), entityMetadata);
                     Projector integratedFieldsProjector = Projector.getInstance(integratedFieldsProjection, entityMetadata);
 
                     String integrationProjectedPreDoc = null, integrationProjectedPostDoc, identityProjectedPostDoc;
@@ -87,21 +86,22 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                             Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(integrationProjectedPreDoc, integrationProjectedPostDoc,
                                     identityProjectedPostDoc);
                             for (Event event : extractedEvents) {
-
-                                event.setEntityName(publishHookConfiguration.getEntityName());
-                                event.setRootEntityName(publishHookConfiguration.getRootEntityName());
-                                event.setEndSystem(publishHookConfiguration.getEndSystem());
+                                event.setEntityName(doc.getEntityMetadata().getName());
                                 event.setVersion(doc.getEntityMetadata().getVersion().getValue());
-                                event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
+
+                                event.setEsbRootEntityName(identityConfiguration.getEsbRootEntityName());
+                                event.setEsbEventEntityName(identityConfiguration.getEsbEventEntityName());
+                                event.setEndSystem(identityConfiguration.getEndSystem());
+                                event.setPriorityValue(identityConfiguration.getDefaultPriority());
                                 event.setCreatedBy(HOOK_NAME);
-                                event.setCreationDate(new Date());
+                                event.setCreationDate(doc.getWhen());
                                 event.addHeaders(publishHookConfiguration.getHeaders());
                                 event.setLastUpdatedBy(HOOK_NAME);
-                                event.setLastUpdateDate(new Date());
-                                event.setStatus("UNPROCESSED");
+                                event.setLastUpdateDate(doc.getWhen());
+                                event.setStatus(Event.Status.UNPROCESSED);
                                 event.setEventSource(doc.getWho());
-                                if (configuration.getRootIdentityFields() != null && configuration.getRootIdentityFields().size() > 0) {
-                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), configuration.getRootIdentityFields()));
+                                if (identityConfiguration.getRootIdentityFields() != null && identityConfiguration.getRootIdentityFields().size() > 0) {
+                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), identityConfiguration.getRootIdentityFields()));
                                 }
                                 try {
                                     insert(ENTITY_NAME, event);
@@ -135,7 +135,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
     }
 
     private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
-    NoSuchMethodException, InstantiationException {
+            NoSuchMethodException, InstantiationException {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
