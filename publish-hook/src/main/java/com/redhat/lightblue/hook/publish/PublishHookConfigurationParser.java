@@ -74,7 +74,7 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
         List<IdentityConfiguration> identityConfigurations = new ArrayList<>();
         for (T configuration : parser.getObjectList(node, PROPERTY_IDENTITY_CONFIGURATIONS)) {
             String esbRootEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_ROOT_ENTITY_NAME);
-            String esbEventEntityName = parser.getStringProperty(configuration, PROPERTY_EVENT_ENTITY_NAME);
+            String esbEventEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_EVENT_ENTITY_NAME);
             String endSystem = parser.getRequiredStringProperty(configuration, PROPERTY_END_SYSTEM);
             Integer defaultPriority = Integer.parseInt(parser.getRequiredStringProperty(configuration, PROPERTY_DEFAULT_PRIORITY));
             Projection integratedFieldsProjection = parser.getProjection(configuration, PROPERTY_INTEGRATED_FIELDS_PROJECTION);
