@@ -5,6 +5,13 @@ public class Identity {
     private String field;
     private String value;
 
+    public Identity() {}
+
+    public Identity(String field, String value) {
+        this.field = field;
+        this.value = value;
+    }
+
     public String getField() {
         return field;
     }
