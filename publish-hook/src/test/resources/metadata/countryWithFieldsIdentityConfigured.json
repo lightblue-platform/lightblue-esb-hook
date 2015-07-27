@@ -5,7 +5,7 @@
       {
         "name": "publishHook",
         "configuration": {
-          "identityConfigurations": [
+          "eventConfigurations": [
             {
               "esbRootEntityName": "Country",
               "esbEventEntityName": "State",

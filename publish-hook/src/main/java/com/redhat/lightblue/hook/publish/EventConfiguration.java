@@ -5,7 +5,7 @@ import java.util.List;
 import com.redhat.lightblue.hook.publish.model.Header;
 import com.redhat.lightblue.query.Projection;
 
-public class IdentityConfiguration {
+public class EventConfiguration {
 
     private final String esbRootEntityName;
     private final String esbEventEntityName;
@@ -18,7 +18,7 @@ public class IdentityConfiguration {
     private final List<String> rootIdentityFields;
     private final List<Header> headers;
 
-    public IdentityConfiguration(
+    public EventConfiguration(
             String esbRootEntityName,
             String esbEventEntityName,
             String endSystem,
