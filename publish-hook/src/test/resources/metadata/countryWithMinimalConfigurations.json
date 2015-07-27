@@ -6,7 +6,7 @@
         "name": "publishHook",
         "configuration": {
           "entityName": "Country",
-          "rootEntityName": "Country",
+          "esbRootEntityName": "Country",
           "endSystem": "nameOfTargetSystem",
           "defaultPriority": "100",
           "identityConfigurations": [

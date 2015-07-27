@@ -3,7 +3,6 @@ package com.redhat.lightblue.hook.publish;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,16 +88,17 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                             for (Event event : extractedEvents) {
 
                                 event.setEntityName(publishHookConfiguration.getEntityName());
-                                event.setRootEntityName(publishHookConfiguration.getRootEntityName());
-                                event.setEndSystem(publishHookConfiguration.getEndSystem());
                                 event.setVersion(doc.getEntityMetadata().getVersion().getValue());
+                                event.setEsbRootEntityName(publishHookConfiguration.getEsbRootEntityName());
+                                event.setEsbEventEntityName(publishHookConfiguration.getEsbEventEntityName());
+                                event.setEndSystem(publishHookConfiguration.getEndSystem());
                                 event.setPriorityValue(Integer.parseInt(publishHookConfiguration.getDefaultPriority()));
                                 event.setCreatedBy(HOOK_NAME);
-                                event.setCreationDate(new Date());
+                                event.setCreationDate(doc.getWhen());
                                 event.addHeaders(publishHookConfiguration.getHeaders());
                                 event.setLastUpdatedBy(HOOK_NAME);
-                                event.setLastUpdateDate(new Date());
-                                event.setStatus("UNPROCESSED");
+                                event.setLastUpdateDate(doc.getWhen());
+                                event.setStatus(Event.STATE_UNPROCESSED);
                                 event.setEventSource(doc.getWho());
                                 if (configuration.getRootIdentityFields() != null && configuration.getRootIdentityFields().size() > 0) {
                                     event.addRootIdentities(getRootIdentities(event.getIdentity(), configuration.getRootIdentityFields()));

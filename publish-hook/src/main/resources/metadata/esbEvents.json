@@ -49,6 +49,13 @@
                     "required": true
                 }
             },
+            "version": {
+                "type": "string",
+                "description": "Version of entity that generated the event. this is NOT the version ESB consumes",
+                "constraints": {
+                    "required": true
+                }
+            },
             "identity": {
                 "type": "array",
                 "description": "The fields that identify the document the event happened on",
@@ -75,11 +82,18 @@
                     "required": true
                 }
             },
-            "rootEntityName": {
+            "esbRootEntityName": {
                 "type": "string",
                 "description": "Name of the entity that is a root entity for ESB for the document that the event happened on",
                 "constraints": {
                     "required": true
+                }
+            },
+            "esbEventEntityName": {
+                "type": "string",
+                "description": "If the event is for a sub-entity of the esbRootEntityName, this field will indicate that sub-entity",
+                "constraints": {
+                    "required": false
                 }
             },
             "rootIdentity": {
@@ -126,16 +140,16 @@
                     "required": true
                 }
             },
-            "eventSource": {
-                "type": "string",
-                "description": "Indicates the user / application that performed the operation.",
+            "priorityValue": {
+                "type": "integer",
+                "description": "The priority assigned to an event",
                 "constraints": {
                     "required": true
                 }
             },
-            "priorityValue": {
-                "type": "integer",
-                "description": "The priority assigned to an event",
+            "eventSource": {
+                "type": "string",
+                "description": "Indicates the user / application that performed the operation.",
                 "constraints": {
                     "required": true
                 }
@@ -164,13 +178,6 @@
             "lastUpdatedBy": {
                 "type": "string",
                 "description": "Who last changed the event.",
-                "constraints": {
-                    "required": true
-                }
-            },
-            "version": {
-                "type": "string",
-                "description": "Version of entity that generated the event. this is NOT the version ESB consumes",
                 "constraints": {
                     "required": true
                 }

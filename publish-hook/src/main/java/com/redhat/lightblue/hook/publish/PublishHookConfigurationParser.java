@@ -12,7 +12,8 @@ import com.redhat.lightblue.query.Projection;
 
 public class PublishHookConfigurationParser<T> implements HookConfigurationParser<T> {
     public static final String PROPERTY_ENTITY_NAME = "entityName";
-    public static final String PROPERTY_ROOT_ENTITY_NAME = "rootEntityName";
+    public static final String PROPERTY_ROOT_ENTITY_NAME = "esbRootEntityName";
+    public static final String PROPERTY_EVENT_ENTITY_NAME = "esbEventEntityName";
     public static final String PROPERTY_END_SYSTEM = "endSystem";
     public static final String PROPERTY_DEFAULT_PRIORITY = "defaultPriority";
     public static final String PROPERTY_HEADERS = "headers";
@@ -38,7 +39,10 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
         if (object instanceof PublishHookConfiguration) {
             PublishHookConfiguration config = (PublishHookConfiguration) object;
             p.putValue(emptyNode, PROPERTY_ENTITY_NAME, config.getEntityName());
-            p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getRootEntityName());
+            p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getEsbRootEntityName());
+            if (config.getEsbEventEntityName() != null) {
+                p.putValue(emptyNode, PROPERTY_ROOT_ENTITY_NAME, config.getEsbEventEntityName());
+            }
             p.putValue(emptyNode, PROPERTY_END_SYSTEM, config.getEndSystem());
             p.putValue(emptyNode, PROPERTY_DEFAULT_PRIORITY, config.getDefaultPriority());
             Object headersArray = p.newArrayField(emptyNode, PROPERTY_HEADERS);
@@ -68,7 +72,8 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     @Override
     public HookConfiguration parse(String name, MetadataParser<T> parser, T node) {
         String entityName = parser.getRequiredStringProperty(node, PROPERTY_ENTITY_NAME);
-        String rootEntityName = parser.getRequiredStringProperty(node, PROPERTY_ROOT_ENTITY_NAME);
+        String esbRootEntityName = parser.getRequiredStringProperty(node, PROPERTY_ROOT_ENTITY_NAME);
+        String esbEventEntityName = parser.getStringProperty(node, PROPERTY_EVENT_ENTITY_NAME);
         String endSystem = parser.getRequiredStringProperty(node, PROPERTY_END_SYSTEM);
         String defaultPriority = parser.getRequiredStringProperty(node, PROPERTY_DEFAULT_PRIORITY);
         List<Header> headers = new ArrayList<>();
@@ -90,6 +95,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             IdentityConfiguration conf = new IdentityConfiguration(integratedFieldsProjection, identityFieldsProjection, rootIdentityFields);
             identityConfigurations.add(conf);
         }
-        return new PublishHookConfiguration(entityName, rootEntityName, endSystem, defaultPriority, headers, identityConfigurations);
+        return new PublishHookConfiguration(entityName, esbRootEntityName, esbEventEntityName, endSystem, defaultPriority, headers, identityConfigurations);
     }
 }
