@@ -93,7 +93,7 @@
                 "type": "string",
                 "description": "If the event is for a sub-entity of the esbRootEntityName, this field will indicate that sub-entity",
                 "constraints": {
-                    "required": false
+                    "required": true
                 }
             },
             "rootIdentity": {
