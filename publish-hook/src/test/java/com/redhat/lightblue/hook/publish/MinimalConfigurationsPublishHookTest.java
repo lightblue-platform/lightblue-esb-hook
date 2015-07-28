@@ -1,6 +1,7 @@
 package com.redhat.lightblue.hook.publish;
 
 import static com.redhat.lightblue.util.JsonUtils.json;
+import static com.redhat.lightblue.util.test.AbstractJsonNodeTest.loadResource;
 
 import org.junit.Test;
 
@@ -17,7 +18,10 @@ public class MinimalConfigurationsPublishHookTest extends BasePublishHookTest {
 
     @Override
     protected JsonNode[] getMetadataJsonNodes() throws Exception {
-        return new JsonNode[]{json(loadResource("/metadata/esbEvents.json", true)), json(loadResource("/metadata/countryWithMinimalConfigurations.json", true))};
+        return new JsonNode[]{
+                json(loadResource("./metadata/esbEvents.json")),
+                json(loadResource("./metadata/countryWithMinimalConfigurations.json"))
+        };
     }
 
     @Test
@@ -26,6 +30,7 @@ public class MinimalConfigurationsPublishHookTest extends BasePublishHookTest {
         insertCountry();
         verifyEvent(1, "{\"field\":\"objectType\",\"op\":\"$eq\",\"rvalue\":\"esbEvents\"}", expectedIdentityKeys, expectedFields, "INSERT");
     }
+
     /**
      * If no trigger is provided, then all actions of the CRUD type will create
      * events.
