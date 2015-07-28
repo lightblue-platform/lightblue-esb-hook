@@ -1,11 +1,11 @@
 package com.redhat.lightblue.hook.publish;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.redhat.lightblue.hook.publish.model.Header;
 import com.redhat.lightblue.query.Projection;
 
-public class IdentityConfiguration {
+public class EventConfiguration {
 
     private final String esbRootEntityName;
     private final String esbEventEntityName;
@@ -13,18 +13,20 @@ public class IdentityConfiguration {
     private final String endSystem;
     private final Integer defaultPriority;
 
-    private Projection integratedFieldsProjection;
-    private Projection identityProjection;
-    private List<String> rootIdentityFields = new ArrayList<>();
+    private final Projection integratedFieldsProjection;
+    private final Projection identityProjection;
+    private final List<String> rootIdentityFields;
+    private final List<Header> headers;
 
-    public IdentityConfiguration(
+    public EventConfiguration(
             String esbRootEntityName,
             String esbEventEntityName,
             String endSystem,
             Integer defaultPriority,
             Projection integratedFieldsProjection,
             Projection identityProjection,
-            List<String> rootIdentityFields) {
+            List<String> rootIdentityFields,
+            List<Header> headers) {
         this.esbRootEntityName = esbRootEntityName;
         this.esbEventEntityName = esbEventEntityName;
         this.endSystem = endSystem;
@@ -32,6 +34,7 @@ public class IdentityConfiguration {
         this.integratedFieldsProjection = integratedFieldsProjection;
         this.identityProjection = identityProjection;
         this.rootIdentityFields = rootIdentityFields;
+        this.headers = headers;
     }
 
     public String getEsbRootEntityName() {
@@ -54,24 +57,16 @@ public class IdentityConfiguration {
         return integratedFieldsProjection;
     }
 
-    public void setIntegratedFieldsProjection(Projection integratedFieldsProjection) {
-        this.integratedFieldsProjection = integratedFieldsProjection;
-    }
-
     public Projection getIdentityProjection() {
         return identityProjection;
-    }
-
-    public void setIdentityProjection(Projection identityProjection) {
-        this.identityProjection = identityProjection;
     }
 
     public List<String> getRootIdentityFields() {
         return rootIdentityFields;
     }
 
-    public void setRootIdentityFields(List<String> rootIdentityFields) {
-        this.rootIdentityFields = rootIdentityFields;
+    public List<Header> getHeaders() {
+        return headers;
     }
 
 }

@@ -57,7 +57,7 @@ public abstract class BasePublishHookTest extends AbstractMongoCRUDTestControlle
         // failing.
         if (expectedEvents > 0) {
             JSONAssert.assertEquals("[{\"identity\":" + expectedIdentityFields
-                    + ",\"esbRootEntityName\":\"Country\",\"endSystem\":\"nameOfTargetSystem\",\"createdBy\":\"publishHook\",\"version\":\"0.1.0-SNAPSHOT\""
+                    + ",\"esbRootEntityName\":\"Country\",\"esbEventEntityName\":\"State\",\"endSystem\":\"nameOfTargetSystem\",\"createdBy\":\"publishHook\",\"version\":\"0.1.0-SNAPSHOT\""
                     + ",\"status\":\"UNPROCESSED\",\"lastUpdatedBy\":\"publishHook\",\"notes\":null,\"operation\":\"" + operation + "\","
                     + "\"entityName\":\"country\",\"objectType\":\"esbEvents\"" + expectedFields + "}]", findResponse.getEntityData().toString(), false);
         }

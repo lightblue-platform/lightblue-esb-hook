@@ -5,19 +5,10 @@
       {
         "name": "publishHook",
         "configuration": {
-          "headers": [
-            {
-              "name": "test",
-              "value": "true"
-            },
-            {
-              "name": "noop",
-              "value": "false"
-            }
-          ],
-          "identityConfigurations": [
+          "eventConfigurations": [
             {
               "esbRootEntityName": "Country",
+              "esbEventEntityName": "State",
               "endSystem": "nameOfTargetSystem",
               "defaultPriority": "100",
               "integratedFieldsProjection": [
@@ -50,7 +41,17 @@
                 "_id",
                 "iso2Code",
                 "iso3Code"
-              ]
+              ],
+              "headers": [
+                {
+                  "name": "test",
+                  "value": "true"
+                },
+                {
+                  "name": "noop",
+                  "value": "false"
+                }
+          ]
             }
           ]
         },

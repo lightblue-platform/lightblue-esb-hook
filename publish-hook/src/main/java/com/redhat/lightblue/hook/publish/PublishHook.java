@@ -64,12 +64,12 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
         for (HookDoc doc : docs) {
 
-            for (IdentityConfiguration identityConfiguration : publishHookConfiguration.getIdentityConfigurations()) {
+            for (EventConfiguration eventConfiguration : publishHookConfiguration.getEventConfigurations()) {
 
                 try {
                     Projection integratedFieldsProjection = Projection
-                            .add(identityConfiguration.getIdentityProjection(), identityConfiguration.getIntegratedFieldsProjection());
-                    Projector identityProjector = Projector.getInstance(identityConfiguration.getIdentityProjection(), entityMetadata);
+                            .add(eventConfiguration.getIdentityProjection(), eventConfiguration.getIntegratedFieldsProjection());
+                    Projector identityProjector = Projector.getInstance(eventConfiguration.getIdentityProjection(), entityMetadata);
                     Projector integratedFieldsProjector = Projector.getInstance(integratedFieldsProjection, entityMetadata);
 
                     String integrationProjectedPreDoc = null, integrationProjectedPostDoc, identityProjectedPostDoc;
@@ -89,19 +89,19 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                 event.setEntityName(doc.getEntityMetadata().getName());
                                 event.setVersion(doc.getEntityMetadata().getVersion().getValue());
 
-                                event.setEsbRootEntityName(identityConfiguration.getEsbRootEntityName());
-                                event.setEsbEventEntityName(identityConfiguration.getEsbEventEntityName());
-                                event.setEndSystem(identityConfiguration.getEndSystem());
-                                event.setPriorityValue(identityConfiguration.getDefaultPriority());
+                                event.setEsbRootEntityName(eventConfiguration.getEsbRootEntityName());
+                                event.setEsbEventEntityName(eventConfiguration.getEsbEventEntityName());
+                                event.setEndSystem(eventConfiguration.getEndSystem());
+                                event.setPriorityValue(eventConfiguration.getDefaultPriority());
                                 event.setCreatedBy(HOOK_NAME);
                                 event.setCreationDate(doc.getWhen());
-                                event.addHeaders(publishHookConfiguration.getHeaders());
+                                event.addHeaders(eventConfiguration.getHeaders());
                                 event.setLastUpdatedBy(HOOK_NAME);
                                 event.setLastUpdateDate(doc.getWhen());
                                 event.setStatus(Event.Status.UNPROCESSED);
                                 event.setEventSource(doc.getWho());
-                                if (identityConfiguration.getRootIdentityFields() != null && identityConfiguration.getRootIdentityFields().size() > 0) {
-                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), identityConfiguration.getRootIdentityFields()));
+                                if (eventConfiguration.getRootIdentityFields() != null && eventConfiguration.getRootIdentityFields().size() > 0) {
+                                    event.addRootIdentities(getRootIdentities(event.getIdentity(), eventConfiguration.getRootIdentityFields()));
                                 }
                                 try {
                                     insert(ENTITY_NAME, event);
