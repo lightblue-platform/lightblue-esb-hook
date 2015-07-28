@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.redhat.lightblue.metadata.types.DateType;
 
 /**
@@ -85,11 +86,18 @@ public class Event {
         return identity;
     }
 
+    @JsonSetter("identity")
     public void addIdentities(Collection<Identity> identities) {
+        if (identities == null) {
+            return;
+        }
         this.identity.addAll(identities);
     }
 
     public void addIdentities(Identity... identities) {
+        if (identities == null) {
+            return;
+        }
         for (Identity id : identities) {
             this.identity.add(id);
         }
@@ -128,11 +136,18 @@ public class Event {
         return rootIdentity;
     }
 
+    @JsonSetter("rootIdentity")
     public void addRootIdentities(Collection<Identity> identities) {
+        if (identities == null) {
+            return;
+        }
         this.rootIdentity.addAll(identities);
     }
 
     public void addRootIdentities(Identity... identities) {
+        if (identities == null) {
+            return;
+        }
         for (Identity id : identities) {
             this.rootIdentity.add(id);
         }
@@ -251,11 +266,18 @@ public class Event {
         return headers;
     }
 
+    @JsonSetter("headers")
     public void addHeaders(Collection<Header> headers) {
+        if (headers == null) {
+            return;
+        }
         this.headers.addAll(headers);
     }
 
     public void addHeaders(Header... headers) {
+        if (headers == null) {
+            return;
+        }
         for (Header header : headers) {
             this.headers.add(header);
         }
