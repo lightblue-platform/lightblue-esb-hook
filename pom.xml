@@ -27,7 +27,7 @@
 
  <groupId>com.redhat.lightblue.hook</groupId>
  <artifactId>lightblue-esb-hook-pom</artifactId>
- <version>0.0.3-SNAPSHOT</version>
+ <version>0.0.3</version>
  <packaging>pom</packaging>
  <name>lightblue-esb-hook: ${project.groupId}|${project.artifactId}</name>
  <description>ESB Publish Hook components</description>
@@ -48,7 +48,7 @@
   <connection>scm:git:https://github.com:lightblue-platform/lightblue-esb-hook.git</connection>
   <developerConnection>scm:git:git@github.com:lightblue-platform/lightblue-esb-hook.git</developerConnection>
   <url>https://github.com/lightblue-platform/lightblue-esb-hook</url>
-  <tag>HEAD</tag>
+  <tag>V0.0.3</tag>
  </scm>
 
  <distributionManagement>
