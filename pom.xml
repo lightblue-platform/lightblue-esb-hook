@@ -67,6 +67,9 @@
   <sonar.jdbc.password>sonar</sonar.jdbc.password>
   <sonar.host.url>http://127.0.0.1:8080</sonar.host.url>
   <sonar.projectName>lightblue-esb-hook</sonar.projectName>
+
+  <lightblue.core.version>1.7.0</lightblue.core.version>
+  <lightblue.mongo.version>1.7.0</lightblue.mongo.version>
  </properties>
 
  <modules>
@@ -79,13 +82,13 @@
     <dependency>
       <groupId>com.redhat.lightblue</groupId>
       <artifactId>lightblue-core-config</artifactId>
-      <version>1.7.0-SNAPSHOT</version>
+      <version>${lightblue.core.version}</version>
     </dependency>
     
     <dependency>
       <groupId>com.redhat.lightblue</groupId>
       <artifactId>lightblue-core-metadata</artifactId>
-      <version>1.7.0-SNAPSHOT</version>
+      <version>${lightblue.core.version}</version>
     </dependency>
     
     <dependency>
@@ -118,14 +121,14 @@
     <dependency>
       <groupId>com.redhat.lightblue.mongo</groupId>
       <artifactId>lightblue-mongo-test</artifactId>
-      <version>1.7.0-SNAPSHOT</version>
+      <version>${lightblue.mongo.version}</version>
       <scope>test</scope>
     </dependency>
     
     <dependency><!-- Would be nice if mongo-test included this -->
       <groupId>com.redhat.lightblue.mongo</groupId>
       <artifactId>lightblue-mongo-config</artifactId>
-      <version>1.7.0-SNAPSHOT</version>
+      <version>${lightblue.mongo.version}</version>
       <scope>test</scope>
     </dependency>
     
