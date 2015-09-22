@@ -6,6 +6,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -30,6 +33,11 @@ public abstract class BasePublishHookTest extends AbstractMongoCRUDTestControlle
         super();
     }
 
+    @Override
+    public Set<String> getHooksToRemove() {
+        return new HashSet<>();
+    }
+    
     @Before
     public void before() throws UnknownHostException {
         cleanupMongoCollections("country", "esbEvents");
