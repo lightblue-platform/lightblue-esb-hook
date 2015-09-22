@@ -6,6 +6,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -30,12 +33,20 @@ public abstract class BasePublishHookTest extends AbstractMongoCRUDTestControlle
         super();
     }
 
+    @Override
+    public Set<String> getHooksToRemove() {
+        return new HashSet<>();
+    }
+    
     @Before
     public void before() throws UnknownHostException {
         cleanupMongoCollections("country", "esbEvents");
     }
 
     protected void insertCountry() throws Exception {
+        com.mongodb.DBCursor cursor=mongoServer.getConnection().getDB("testdb").getCollection("metadata").find();
+        while(cursor.hasNext())
+            System.out.println(cursor.next());
         Response insertResponse = getLightblueFactory().getMediator().insert(
                 createRequest_FromJsonString(InsertionRequest.class, "{\"entity\":\"country\",\"entityVersion\":\"" + COUNTRY_VERSION + "\",\"data\":["
                         + "{\"_id\":\"12312312312\",\"name\":\"United States\",\"iso2Code\":\"123\",\"iso3Code\":\"456\","
