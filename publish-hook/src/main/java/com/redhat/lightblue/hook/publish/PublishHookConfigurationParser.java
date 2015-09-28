@@ -16,7 +16,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
     public static final String PROPERTY_ROOT_ENTITY_NAME = "esbRootEntityName";
     public static final String PROPERTY_EVENT_ENTITY_NAME = "esbEventEntityName";
     public static final String PROPERTY_END_SYSTEM = "endSystem";
-    public static final String PROPERTY_DEFAULT_PRIORITY = "defaultPriority";
     public static final String PROPERTY_HEADERS = "headers";
     public static final String PROPERTY_HEADER_NAME = "name";
     public static final String PROPERTY_HEADER_VALUE = "value";
@@ -47,7 +46,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
                     p.putValue(eventConfigurationObject, PROPERTY_EVENT_ENTITY_NAME, eventConfiguration.getEsbEventEntityName());
                 }
                 p.putValue(eventConfigurationObject, PROPERTY_END_SYSTEM, eventConfiguration.getEndSystem());
-                p.putValue(eventConfigurationObject, PROPERTY_DEFAULT_PRIORITY, eventConfiguration.getDefaultPriority().toString());
                 p.putProjection(eventConfigurationObject, PROPERTY_INTEGRATED_FIELDS_PROJECTION, eventConfiguration.getIntegratedFieldsProjection());
                 p.putProjection(eventConfigurationObject, PROPERTY_IDENTITY_PROJECTION, eventConfiguration.getIdentityProjection());
                 if (eventConfiguration.getRootIdentityFields() != null) {
@@ -76,7 +74,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
             String esbRootEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_ROOT_ENTITY_NAME);
             String esbEventEntityName = parser.getRequiredStringProperty(configuration, PROPERTY_EVENT_ENTITY_NAME);
             String endSystem = parser.getRequiredStringProperty(configuration, PROPERTY_END_SYSTEM);
-            Integer defaultPriority = Integer.parseInt(parser.getRequiredStringProperty(configuration, PROPERTY_DEFAULT_PRIORITY));
             Projection integratedFieldsProjection = parser.getProjection(configuration, PROPERTY_INTEGRATED_FIELDS_PROJECTION);
             Projection identityFieldsProjection = parser.getProjection(configuration, PROPERTY_IDENTITY_PROJECTION);
             List<String> rootIdentityFields = parser.getStringList(configuration, PROPERTY_ROOT_IDENTITY_FIELDS);
@@ -94,7 +91,6 @@ public class PublishHookConfigurationParser<T> implements HookConfigurationParse
                     esbRootEntityName,
                     esbEventEntityName,
                     endSystem,
-                    defaultPriority,
                     integratedFieldsProjection,
                     identityFieldsProjection,
                     rootIdentityFields,

@@ -25,7 +25,6 @@ public class Event {
     private Status status;
     private Operation operation;
     private String eventSource;
-    private Integer priorityValue;
     @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
     private Date creationDate;
     private String createdBy;
@@ -86,12 +85,12 @@ public class Event {
     }
 
     public void addIdentities(Collection<Identity> identities) {
-        this.identity.addAll(identities);
+        identity.addAll(identities);
     }
 
     public void addIdentities(Identity... identities) {
         for (Identity id : identities) {
-            this.identity.add(id);
+            identity.add(id);
         }
     }
 
@@ -104,7 +103,7 @@ public class Event {
     }
 
     public void setEsbRootEntityName(String entityName) {
-        this.esbRootEntityName = entityName;
+        esbRootEntityName = entityName;
     }
 
     /**
@@ -129,12 +128,12 @@ public class Event {
     }
 
     public void addRootIdentities(Collection<Identity> identities) {
-        this.rootIdentity.addAll(identities);
+        rootIdentity.addAll(identities);
     }
 
     public void addRootIdentities(Identity... identities) {
         for (Identity id : identities) {
-            this.rootIdentity.add(id);
+            rootIdentity.add(id);
         }
     }
 
@@ -175,17 +174,6 @@ public class Event {
 
     public void setOperation(Operation operation) {
         this.operation = operation;
-    }
-
-    /**
-     * @return the esb priority weight of this event.
-     */
-    public Integer getPriorityValue() {
-        return priorityValue;
-    }
-
-    public void setPriorityValue(Integer priorityValue) {
-        this.priorityValue = priorityValue;
     }
 
     /**
