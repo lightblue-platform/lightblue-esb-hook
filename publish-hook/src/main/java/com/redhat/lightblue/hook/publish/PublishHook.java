@@ -51,7 +51,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
     @Override
     public void setLightblueFactory(LightblueFactory factory) {
-        this.lightblueFactory = factory;
+        lightblueFactory = factory;
     }
 
     @Override
@@ -92,7 +92,6 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                 event.setEsbRootEntityName(eventConfiguration.getEsbRootEntityName());
                                 event.setEsbEventEntityName(eventConfiguration.getEsbEventEntityName());
                                 event.setEndSystem(eventConfiguration.getEndSystem());
-                                event.setPriorityValue(eventConfiguration.getDefaultPriority());
                                 event.setCreatedBy(HOOK_NAME);
                                 event.setCreationDate(doc.getWhen());
                                 event.addHeaders(eventConfiguration.getHeaders());

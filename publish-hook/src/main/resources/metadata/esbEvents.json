@@ -140,13 +140,6 @@
                     "required": true
                 }
             },
-            "priorityValue": {
-                "type": "integer",
-                "description": "The priority assigned to an event",
-                "constraints": {
-                    "required": true
-                }
-            },
             "eventSource": {
                 "type": "string",
                 "description": "Indicates the user / application that performed the operation.",

@@ -11,7 +11,6 @@ public class EventConfiguration {
     private final String esbEventEntityName;
 
     private final String endSystem;
-    private final Integer defaultPriority;
 
     private final Projection integratedFieldsProjection;
     private final Projection identityProjection;
@@ -22,7 +21,6 @@ public class EventConfiguration {
             String esbRootEntityName,
             String esbEventEntityName,
             String endSystem,
-            Integer defaultPriority,
             Projection integratedFieldsProjection,
             Projection identityProjection,
             List<String> rootIdentityFields,
@@ -30,7 +28,6 @@ public class EventConfiguration {
         this.esbRootEntityName = esbRootEntityName;
         this.esbEventEntityName = esbEventEntityName;
         this.endSystem = endSystem;
-        this.defaultPriority = defaultPriority;
         this.integratedFieldsProjection = integratedFieldsProjection;
         this.identityProjection = identityProjection;
         this.rootIdentityFields = rootIdentityFields;
@@ -47,10 +44,6 @@ public class EventConfiguration {
 
     public String getEndSystem() {
         return endSystem;
-    }
-
-    public Integer getDefaultPriority() {
-        return defaultPriority;
     }
 
     public Projection getIntegratedFieldsProjection() {
