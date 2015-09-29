@@ -10,7 +10,6 @@
               "esbRootEntityName": "Country",
               "esbEventEntityName": "State",
               "endSystem": "nameOfTargetSystem",
-              "defaultPriority": "100",
               "integratedFieldsProjection": [
                 {
                   "field": "optionalField",
