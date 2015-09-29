@@ -106,14 +106,14 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                     insert(ENTITY_NAME, event);
                                 } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
                                         | InstantiationException | IOException e) {
-                                    LOGGER.error("Unexpected error", e);
+                                    throw new RuntimeException("Unexpected error", e);
                                 }
 
                             }
                         }
                     }
                 } catch (IllegalArgumentException | JSONException e) {
-                    LOGGER.error(e.toString());
+                    throw new RuntimeException("Unexpected exception", e);
                 }
             }
         }
@@ -145,12 +145,12 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         if (!r.getErrors().isEmpty()) {
             // TODO Better Handle Exception
             for (Error e : r.getErrors()) {
-                LOGGER.error(e.toString());
+                LOGGER.error("Lightblue Error", e);
             }
         } else if (!r.getDataErrors().isEmpty()) {
             // TODO Better Handle Exception
             for (DataError e : r.getDataErrors()) {
-                LOGGER.error(e.toString());
+                LOGGER.error("Lightblue Data Error", e);
             }
         }
     }
