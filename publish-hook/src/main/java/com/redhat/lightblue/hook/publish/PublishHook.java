@@ -82,7 +82,12 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
                         if (doc.getPreDoc() == null
                                 || JSONCompare.compareJSON(integrationProjectedPreDoc, integrationProjectedPostDoc, JSONCompareMode.LENIENT).failed()) {
-                            Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(integrationProjectedPreDoc, integrationProjectedPostDoc,
+                            LOGGER.debug("integrationProjectedPreDoc: {}", integrationProjectedPreDoc);
+                            LOGGER.debug("integrationProjectedPostDoc: {}", integrationProjectedPostDoc);
+                            LOGGER.debug("identityProjectedPostDoc: {}", identityProjectedPostDoc);
+                            Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(
+                                    integrationProjectedPreDoc, 
+                                    integrationProjectedPostDoc,
                                     identityProjectedPostDoc);
                             for (Event event : extractedEvents) {
                                 event.setEntityName(doc.getEntityMetadata().getName());
