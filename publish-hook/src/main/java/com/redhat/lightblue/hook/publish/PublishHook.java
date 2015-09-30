@@ -39,7 +39,6 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
     public static final String HOOK_NAME = "publishHook";
     public static final String ENTITY_NAME = "esbEvents";
-    public static final String ERR_MISSING_ID = HOOK_NAME + ":MissingID";
 
     private LightblueFactory lightblueFactory;
     private static transient JsonNodeFactory factory = JsonNodeFactory.withExactBigDecimals(true);
@@ -102,18 +101,13 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                 if (eventConfiguration.getRootIdentityFields() != null && eventConfiguration.getRootIdentityFields().size() > 0) {
                                     event.addRootIdentities(getRootIdentities(event.getIdentity(), eventConfiguration.getRootIdentityFields()));
                                 }
-                                try {
-                                    insert(ENTITY_NAME, event);
-                                } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
-                                        | InstantiationException | IOException e) {
-                                    LOGGER.error("Unexpected error", e);
-                                }
 
+                                insert(ENTITY_NAME, event);
                             }
                         }
                     }
                 } catch (IllegalArgumentException | JSONException e) {
-                    LOGGER.error(e.toString());
+                    LOGGER.error("Unexpected exception while preparing events for insertion.", e);
                 }
             }
         }
@@ -133,24 +127,26 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         return rootIdentities;
     }
 
-    private void insert(String entityName, Object entity) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, IOException,
-            NoSuchMethodException, InstantiationException {
+    private void insert(String entityName, Object entity) {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
         data.add(new ObjectMapper().valueToTree(entity));
 
         InsertionRequest ireq = InsertionRequest.fromJson(jsonNode);
-        Response r = lightblueFactory.getMediator().insert(ireq);
+        Response r;
+        try {
+            r = lightblueFactory.getMediator().insert(ireq);
+        } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | IOException e) {
+            throw new RuntimeException("Lightblue is not configured properly.", e);
+        }
         if (!r.getErrors().isEmpty()) {
-            // TODO Better Handle Exception
             for (Error e : r.getErrors()) {
-                LOGGER.error(e.toString());
+                LOGGER.error("Errors while attempting to insert esb events", e);
             }
         } else if (!r.getDataErrors().isEmpty()) {
-            // TODO Better Handle Exception
             for (DataError e : r.getDataErrors()) {
-                LOGGER.error(e.toString());
+                LOGGER.error("Data errors while attempting to insert esb events", e);
             }
         }
     }
