@@ -107,7 +107,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                         }
                     }
                 } catch (IllegalArgumentException | JSONException e) {
-                    throw Error.get(HOOK_NAME + ":UnexpectedException", e);
+                    LOGGER.error("Unexpected exception while preparing events for insertion.", e);
                 }
             }
         }
@@ -138,18 +138,16 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         try {
             r = lightblueFactory.getMediator().insert(ireq);
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException | IOException e) {
-            throw Error.get(HOOK_NAME + ":MediatorException", e);
+            throw new RuntimeException("Lightblue is not configured properly.", e);
         }
         if (!r.getErrors().isEmpty()) {
             for (Error e : r.getErrors()) {
-                LOGGER.error("Lightblue Error", e);
+                LOGGER.error("Errors while attempting to insert esb events", e);
             }
-            throw Error.get(HOOK_NAME + ":Error", "Errors while attempting to insert esb events.");
         } else if (!r.getDataErrors().isEmpty()) {
             for (DataError e : r.getDataErrors()) {
-                LOGGER.error("Lightblue Data Error", e);
+                LOGGER.error("Data errors while attempting to insert esb events", e);
             }
-            throw Error.get(HOOK_NAME + ":DataError", "Eata errors while attempting to insert esb events.");
         }
     }
 
