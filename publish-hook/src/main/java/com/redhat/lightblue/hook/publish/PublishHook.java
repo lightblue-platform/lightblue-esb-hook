@@ -104,7 +104,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                 event.setLastUpdateDate(doc.getWhen());
                                 event.setStatus(Event.Status.UNPROCESSED);
 
-                                if (StringUtils.isEmpty(doc.getWho())) {
+                                if (!StringUtils.isEmpty(doc.getWho())) {
                                     event.setEventSource(doc.getWho());
                                 } else {
                                     event.setEventSource("Unknown");
