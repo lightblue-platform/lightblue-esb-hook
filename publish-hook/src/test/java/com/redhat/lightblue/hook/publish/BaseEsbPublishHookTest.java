@@ -19,7 +19,7 @@ import com.redhat.lightblue.crud.UpdateRequest;
 import com.redhat.lightblue.mongo.test.AbstractMongoCRUDTestController;
 import com.redhat.lightblue.test.FakeClientIdentification;
 
-public abstract class BasePublishHookTest extends AbstractMongoCRUDTestController {
+public abstract class BaseEsbPublishHookTest extends AbstractMongoCRUDTestController {
 
     protected static final String ESB_EVENTS_VERSION = "0.0.1-SNAPSHOT";
     protected static final String COUNTRY_VERSION = "0.1.0-SNAPSHOT";
@@ -29,7 +29,7 @@ public abstract class BasePublishHookTest extends AbstractMongoCRUDTestControlle
         System.setProperty("mongo.datasource", "mongodata");
     }
 
-    public BasePublishHookTest() throws Exception {
+    public BaseEsbPublishHookTest() throws Exception {
         super();
     }
 

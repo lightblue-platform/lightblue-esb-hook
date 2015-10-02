@@ -8,13 +8,13 @@ import com.redhat.lightblue.metadata.HookConfiguration;
  *
  * @author vrjain
  */
-public class PublishHookConfiguration implements HookConfiguration {
+public class EsbPublishHookConfiguration implements HookConfiguration {
 
     private static final long serialVersionUID = -2297815875083279355L;
 
     private final List<EventConfiguration> eventConfigurations;
 
-    public PublishHookConfiguration(List<EventConfiguration> eventConfigurations) {
+    public EsbPublishHookConfiguration(List<EventConfiguration> eventConfigurations) {
         this.eventConfigurations = eventConfigurations;
     }
 

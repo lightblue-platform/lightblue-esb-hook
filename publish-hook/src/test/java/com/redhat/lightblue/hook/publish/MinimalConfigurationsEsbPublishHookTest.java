@@ -7,12 +7,12 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class MinimalConfigurationsPublishHookTest extends BasePublishHookTest {
+public class MinimalConfigurationsEsbPublishHookTest extends BaseEsbPublishHookTest {
 
     private static final String expectedIdentityKeys = "[{\"field\":\"_id\"},{\"value\":\"123\",\"field\":\"iso2Code\"},{\"value\":\"456\",\"field\":\"iso3Code\"}]";
     private static final String expectedFields = ",\"rootIdentity#\":0,\"headers#\":0";
 
-    public MinimalConfigurationsPublishHookTest() throws Exception {
+    public MinimalConfigurationsEsbPublishHookTest() throws Exception {
         super();
     }
 
