@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -86,7 +87,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                             LOGGER.debug("integrationProjectedPostDoc: {}", integrationProjectedPostDoc);
                             LOGGER.debug("identityProjectedPostDoc: {}", identityProjectedPostDoc);
                             Set<Event> extractedEvents = EventExctractionUtil.compareAndExtractEvents(
-                                    integrationProjectedPreDoc, 
+                                    integrationProjectedPreDoc,
                                     integrationProjectedPostDoc,
                                     identityProjectedPostDoc);
                             for (Event event : extractedEvents) {
@@ -102,7 +103,13 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                                 event.setLastUpdatedBy(HOOK_NAME);
                                 event.setLastUpdateDate(doc.getWhen());
                                 event.setStatus(Event.Status.UNPROCESSED);
-                                event.setEventSource(doc.getWho());
+
+                                if (!StringUtils.isEmpty(doc.getWho())) {
+                                    event.setEventSource(doc.getWho());
+                                } else {
+                                    event.setEventSource("Unknown");
+                                }
+
                                 if (eventConfiguration.getRootIdentityFields() != null && eventConfiguration.getRootIdentityFields().size() > 0) {
                                     event.addRootIdentities(getRootIdentities(event.getIdentity(), eventConfiguration.getRootIdentityFields()));
                                 }
