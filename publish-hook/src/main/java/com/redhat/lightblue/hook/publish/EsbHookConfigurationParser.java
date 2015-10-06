@@ -10,7 +10,7 @@ import com.redhat.lightblue.metadata.parser.HookConfigurationParser;
 import com.redhat.lightblue.metadata.parser.MetadataParser;
 import com.redhat.lightblue.query.Projection;
 
-public class EsbPublishHookConfigurationParser<T> implements HookConfigurationParser<T> {
+public class EsbHookConfigurationParser<T> implements HookConfigurationParser<T> {
 
     public static final String PROPERTY_EVENT_CONFIGURATIONS = "eventConfigurations";
     public static final String PROPERTY_ROOT_ENTITY_NAME = "esbRootEntityName";
@@ -25,18 +25,18 @@ public class EsbPublishHookConfigurationParser<T> implements HookConfigurationPa
 
     @Override
     public String getName() {
-        return EsbPublishHook.HOOK_NAME;
+        return EsbHook.HOOK_NAME;
     }
 
     @Override
     public CRUDHook getCRUDHook() {
-        return new EsbPublishHook();
+        return new EsbHook();
     }
 
     @Override
     public void convert(MetadataParser<T> p, T emptyNode, HookConfiguration object) {
-        if (object instanceof EsbPublishHookConfiguration) {
-            EsbPublishHookConfiguration config = (EsbPublishHookConfiguration) object;
+        if (object instanceof EsbHookConfiguration) {
+            EsbHookConfiguration config = (EsbHookConfiguration) object;
 
             Object eventConfigurationArray = p.newArrayField(emptyNode, PROPERTY_EVENT_CONFIGURATIONS);
             for (EventConfiguration eventConfiguration : config.getEventConfigurations()) {
@@ -98,6 +98,6 @@ public class EsbPublishHookConfigurationParser<T> implements HookConfigurationPa
             eventConfigurations.add(conf);
         }
 
-        return new EsbPublishHookConfiguration(eventConfigurations);
+        return new EsbHookConfiguration(eventConfigurations);
     }
 }

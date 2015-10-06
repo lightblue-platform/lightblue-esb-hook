@@ -3,6 +3,6 @@
     "dataSource" : "${mongo.datasource}",
     "collection": "metadata",
     "hookConfigurationParsers": [
-        "com.redhat.lightblue.hook.publish.EsbPublishHookConfigurationParser"
+        "com.redhat.lightblue.hook.publish.EsbHookConfigurationParser"
     ]
 }

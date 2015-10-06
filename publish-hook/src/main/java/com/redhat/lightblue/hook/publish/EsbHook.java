@@ -34,9 +34,9 @@ import com.redhat.lightblue.metadata.HookConfiguration;
 import com.redhat.lightblue.query.Projection;
 import com.redhat.lightblue.util.Error;
 
-public class EsbPublishHook implements CRUDHook, LightblueFactoryAware {
+public class EsbHook implements CRUDHook, LightblueFactoryAware {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(EsbPublishHook.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(EsbHook.class);
 
     public static final String HOOK_NAME = "publishHook";
     public static final String ENTITY_NAME = "esbEvents";
@@ -56,11 +56,11 @@ public class EsbPublishHook implements CRUDHook, LightblueFactoryAware {
 
     @Override
     public void processHook(EntityMetadata entityMetadata, HookConfiguration hookConfiguration, List<HookDoc> docs) {
-        if (!(hookConfiguration instanceof EsbPublishHookConfiguration)) {
+        if (!(hookConfiguration instanceof EsbHookConfiguration)) {
             throw new IllegalArgumentException("Only instances of PublishHookConfiguration are supported.");
         }
 
-        EsbPublishHookConfiguration publishHookConfiguration = (EsbPublishHookConfiguration) hookConfiguration;
+        EsbHookConfiguration publishHookConfiguration = (EsbHookConfiguration) hookConfiguration;
 
         for (HookDoc doc : docs) {
 

@@ -7,12 +7,13 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class MinimalConfigurationsEsbPublishHookTest extends BaseEsbPublishHookTest {
+public class FieldIdentityEsbHookTest extends BaseEsbHookTest {
 
-    private static final String expectedIdentityKeys = "[{\"field\":\"_id\"},{\"value\":\"123\",\"field\":\"iso2Code\"},{\"value\":\"456\",\"field\":\"iso3Code\"}]";
-    private static final String expectedFields = ",\"rootIdentity#\":0,\"headers#\":0";
+    private static final String expectedIdentityKeys = "[{\"field\":\"_id\"},{\"value\":\"swift\",\"field\":\"optionalField.mySpecificField\"}]";
+    private static final String expectedFields = ",\"rootIdentity\":[{\"field\":\"_id\"}]"
+            + ",\"headers\":[{\"name\":\"test\",\"value\":\"true\"},{\"name\":\"noop\",\"value\":\"false\"}]";
 
-    public MinimalConfigurationsEsbPublishHookTest() throws Exception {
+    public FieldIdentityEsbHookTest() throws Exception {
         super();
     }
 
@@ -20,7 +21,7 @@ public class MinimalConfigurationsEsbPublishHookTest extends BaseEsbPublishHookT
     protected JsonNode[] getMetadataJsonNodes() throws Exception {
         return new JsonNode[]{
                 json(loadResource("./metadata/esbEvents.json")),
-                json(loadResource("./metadata/countryWithMinimalConfigurations.json"))
+                json(loadResource("./metadata/countryWithFieldsIdentityConfigured.json"))
         };
     }
 
@@ -31,18 +32,14 @@ public class MinimalConfigurationsEsbPublishHookTest extends BaseEsbPublishHookT
         verifyEvent(1, "{\"field\":\"objectType\",\"op\":\"$eq\",\"rvalue\":\"esbEvents\"}", expectedIdentityKeys, expectedFields, "INSERT");
     }
 
-    /**
-     * If no trigger is provided, then all actions of the CRUD type will create
-     * events.
-     */
     @Test
     public void testPublishOnNameUpdate() throws Exception {
 
         insertCountry();
         updateCountry(1, "{ \"$set\": { \"name\": \"England\" } }");
         verifyEvent(
-                1,
+                0,
                 "{ \"$and\" :[{\"field\":\"objectType\",\"op\":\"$eq\",\"rvalue\":\"esbEvents\"}, {\"field\":\"operation\",\"op\":\"$eq\",\"rvalue\":\"UPDATE\"}] }",
-                expectedIdentityKeys, expectedFields, "UPDATE");
+                null, null, null);
     }
 }
