@@ -67,6 +67,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
             for (EventConfiguration eventConfiguration : publishHookConfiguration.getEventConfigurations()) {
 
                 try {
+                    LOGGER.debug("eventConfiguration.getIdentityProjection: {}", eventConfiguration.getIdentityProjection());
                     Projection integratedFieldsProjection = Projection
                             .add(eventConfiguration.getIdentityProjection(), eventConfiguration.getIntegratedFieldsProjection());
                     Projector identityProjector = Projector.getInstance(eventConfiguration.getIdentityProjection(), entityMetadata);
@@ -78,6 +79,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
                     }
                     // no point in creating events if post doc is not available
                     if (doc.getPostDoc() != null) {
+                        LOGGER.debug("postDoc: {}", doc.getPostDoc());
                         integrationProjectedPostDoc = integratedFieldsProjector.project(doc.getPostDoc(), factory).toString();
                         identityProjectedPostDoc = identityProjector.project(doc.getPostDoc(), factory).toString();
 
