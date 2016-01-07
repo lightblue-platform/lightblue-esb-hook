@@ -67,8 +67,8 @@
   <sonar.host.url>http://127.0.0.1:8080</sonar.host.url>
   <sonar.projectName>lightblue-esb-hook</sonar.projectName>
 
-  <lightblue.core.version>1.10.0-SNAPSHOT</lightblue.core.version>
-  <lightblue.mongo.version>1.10.0-SNAPSHOT</lightblue.mongo.version>
+  <lightblue.core.version>1.11.0-SNAPSHOT</lightblue.core.version>
+  <lightblue.mongo.version>1.11.0-SNAPSHOT</lightblue.mongo.version>
  </properties>
 
  <modules>
@@ -126,7 +126,7 @@
     
     <dependency><!-- Would be nice if mongo-test included this -->
       <groupId>com.redhat.lightblue.mongo</groupId>
-      <artifactId>lightblue-mongo-config</artifactId>
+      <artifactId>lightblue-mongo</artifactId>
       <version>${lightblue.mongo.version}</version>
       <scope>test</scope>
     </dependency>

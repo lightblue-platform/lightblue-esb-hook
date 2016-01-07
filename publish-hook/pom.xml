@@ -70,7 +70,7 @@
     
     <dependency><!-- Would be nice if mongo-test included this -->
       <groupId>com.redhat.lightblue.mongo</groupId>
-      <artifactId>lightblue-mongo-config</artifactId>
+      <artifactId>lightblue-mongo</artifactId>
       <scope>test</scope>
     </dependency>
     
