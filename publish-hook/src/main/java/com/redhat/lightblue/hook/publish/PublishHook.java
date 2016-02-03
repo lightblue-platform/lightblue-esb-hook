@@ -15,7 +15,6 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,6 +32,7 @@ import com.redhat.lightblue.metadata.EntityMetadata;
 import com.redhat.lightblue.metadata.HookConfiguration;
 import com.redhat.lightblue.query.Projection;
 import com.redhat.lightblue.util.Error;
+import com.redhat.lightblue.util.JsonUtils;
 
 public class PublishHook implements CRUDHook, LightblueFactoryAware {
 
@@ -145,7 +145,7 @@ public class PublishHook implements CRUDHook, LightblueFactoryAware {
         ObjectNode jsonNode = new ObjectNode(JsonNodeFactory.instance);
         jsonNode.put("entity", entityName);
         ArrayNode data = jsonNode.putArray("data");
-        data.add(new ObjectMapper().valueToTree(entity));
+        data.add(JsonUtils.getObjectMapper().valueToTree(entity));
 
         InsertionRequest ireq = InsertionRequest.fromJson(jsonNode);
         Response r;
