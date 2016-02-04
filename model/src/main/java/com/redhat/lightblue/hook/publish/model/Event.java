@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redhat.lightblue.metadata.types.DateType;
 
@@ -25,10 +26,10 @@ public class Event {
     private Status status;
     private Operation operation;
     private String eventSource;
-    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
+    @JsonFormat(pattern = DateType.DATE_FORMAT_STR, shape = Shape.STRING)
     private Date creationDate;
     private String createdBy;
-    @JsonFormat(pattern = DateType.DATE_FORMAT_STR)
+    @JsonFormat(pattern = DateType.DATE_FORMAT_STR, shape = Shape.STRING)
     private Date lastUpdateDate;
     private String lastUpdatedBy;
     private String version;
