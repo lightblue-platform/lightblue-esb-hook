@@ -24,7 +24,7 @@
   <parent>
     <groupId>com.redhat.lightblue.hook</groupId>
     <artifactId>lightblue-esb-hook-pom</artifactId>
-    <version>0.0.6</version>
+    <version>0.0.7-SNAPSHOT</version>
   </parent>
   
   <artifactId>lightblue-esb-hook-model</artifactId>
